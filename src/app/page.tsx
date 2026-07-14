@@ -1,12 +1,13 @@
 'use client'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   LayoutDashboard,
   ScanLine,
   MessageCircle,
   Store,
   Lightbulb,
+  Droplets,
 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Header } from '@/components/agrisense/header'
@@ -16,10 +17,12 @@ import { AiDiagnosis } from '@/components/agrisense/ai-diagnosis'
 import { AiAssistant } from '@/components/agrisense/ai-assistant'
 import { MarketPrices } from '@/components/agrisense/market-prices'
 import { AgronomicAdvice } from '@/components/agrisense/agronomic-advice'
+import { IrrigationTab } from '@/components/agrisense/irrigation-tab'
 
 const tabs = [
   { value: 'dashboard', label: 'Tableau de Bord', icon: LayoutDashboard },
   { value: 'diagnosis', label: 'Diagnostic IA', icon: ScanLine },
+  { value: 'irrigation', label: 'Irrigation', icon: Droplets },
   { value: 'assistant', label: 'Assistant IA', icon: MessageCircle },
   { value: 'market', label: 'Marché', icon: Store },
   { value: 'advice', label: 'Conseils', icon: Lightbulb },
@@ -51,23 +54,24 @@ export default function Home() {
           </div>
 
           {/* Tab content */}
-          <AnimatePresence mode="wait">
-            <TabsContent value="dashboard">
-              <DashboardTab />
-            </TabsContent>
-            <TabsContent value="diagnosis">
-              <AiDiagnosis />
-            </TabsContent>
-            <TabsContent value="assistant">
-              <AiAssistant />
-            </TabsContent>
-            <TabsContent value="market">
-              <MarketPrices />
-            </TabsContent>
-            <TabsContent value="advice">
-              <AgronomicAdvice />
-            </TabsContent>
-          </AnimatePresence>
+          <TabsContent value="dashboard">
+            <DashboardTab />
+          </TabsContent>
+          <TabsContent value="diagnosis">
+            <AiDiagnosis />
+          </TabsContent>
+          <TabsContent value="irrigation">
+            <IrrigationTab />
+          </TabsContent>
+          <TabsContent value="assistant">
+            <AiAssistant />
+          </TabsContent>
+          <TabsContent value="market">
+            <MarketPrices />
+          </TabsContent>
+          <TabsContent value="advice">
+            <AgronomicAdvice />
+          </TabsContent>
         </Tabs>
       </main>
 

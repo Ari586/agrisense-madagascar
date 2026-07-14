@@ -1,9 +1,26 @@
 'use client'
 
 import { useTheme } from 'next-themes'
-import { Leaf, Moon, Sun } from 'lucide-react'
+import { Leaf, Moon, Sun, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { motion } from 'framer-motion'
+
+const REGIONS = [
+  { value: 'antananarivo', label: 'Antananarivo' },
+  { value: 'toamasina', label: 'Toamasina' },
+  { value: 'antsirabe', label: 'Antsirabe' },
+  { value: 'mahajanga', label: 'Mahajanga' },
+  { value: 'fianarantsoa', label: 'Fianarantsoa' },
+  { value: 'toliara', label: 'Toliara' },
+  { value: 'antsiranana', label: 'Antsiranana' },
+]
 
 export function Header() {
   const { theme, setTheme } = useTheme()
@@ -15,7 +32,7 @@ export function Header() {
           {/* Madagascar flag accent bar */}
           <div className="flex h-8 w-1 rounded-full overflow-hidden flex-col">
             <div className="flex-1 bg-red-500" />
-            <div className="flex-1 bg-white" />
+            <div className="flex-1 bg-white dark:bg-gray-400" />
             <div className="flex-1 bg-green-600" />
           </div>
           <motion.div
@@ -37,15 +54,33 @@ export function Header() {
             </div>
           </motion.div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label="Basculer le thème"
-        >
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        </Button>
+
+        <div className="flex items-center gap-2">
+          {/* Region selector */}
+          <Select defaultValue="antananarivo">
+            <SelectTrigger className="w-auto gap-1.5 h-9 text-xs sm:text-sm border-dashed">
+              <MapPin className="h-3.5 w-3.5 text-primary" />
+              <SelectValue placeholder="Région" />
+            </SelectTrigger>
+            <SelectContent>
+              {REGIONS.map((r) => (
+                <SelectItem key={r.value} value={r.value}>
+                  {r.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label="Basculer le thème"
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
+        </div>
       </div>
     </header>
   )

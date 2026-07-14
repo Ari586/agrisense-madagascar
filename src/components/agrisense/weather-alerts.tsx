@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import {
-  Cyclone,
+  Tornado,
   CloudSun,
   CloudRain,
   MapPin,
@@ -21,7 +21,7 @@ const severityConfig = {
 } as const
 
 const typeIcons: Record<string, FC<{ className?: string }>> = {
-  cyclone: Cyclone,
+  cyclone: Tornado,
   drought: CloudSun,
   rain: CloudRain,
 }
@@ -31,7 +31,7 @@ export function WeatherAlerts() {
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-          <Cyclone className="h-5 w-5 text-red-500" />
+          <Tornado className="h-5 w-5 text-red-500" />
           Alertes Climatiques
         </CardTitle>
       </CardHeader>

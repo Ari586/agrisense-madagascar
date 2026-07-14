@@ -24,9 +24,9 @@ export async function POST(request: NextRequest) {
     }
 
     const ZAI = (await import('z-ai-web-dev-sdk')).default
+    const zai = await ZAI.create()
 
-    const completion = await ZAI.chat.completions({
-      model: 'default',
+    const completion = await zai.chat.completions.create({
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         ...messages.map((m: { role: string; content: string }) => ({

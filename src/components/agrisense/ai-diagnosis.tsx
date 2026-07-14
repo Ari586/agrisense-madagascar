@@ -10,17 +10,32 @@ import {
   Sparkles,
   AlertCircle,
   CheckCircle2,
+  ShieldAlert,
+  Bug,
+  Leaf,
+  Shield,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 
 interface DiagnosisResult {
   disease: string
   confidence: number
-  description: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  symptoms: string
   treatment: string
+  prevention: string
+  malagasyName: string
 }
+
+const severityConfig = {
+  low: { label: 'Faible', className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800', icon: CheckCircle2 },
+  medium: { label: 'Modéré', className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800', icon: ShieldAlert },
+  high: { label: 'Élevé', className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800', icon: Bug },
+  critical: { label: 'Critique', className: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800', icon: ShieldAlert },
+} as const
 
 export function AiDiagnosis() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -81,11 +96,14 @@ export function AiDiagnosis() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: imageBase64 }),
       })
-      if (!res.ok) throw new Error('Erreur serveur')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null)
+        throw new Error(errData?.error || 'Erreur serveur')
+      }
       const data = await res.json()
       setResult(data)
-    } catch {
-      setError('Impossible de contacter le serveur. Vérifiez votre connexion.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Impossible de contacter le serveur. Vérifiez votre connexion.')
     } finally {
       setIsAnalyzing(false)
     }
@@ -113,7 +131,7 @@ export function AiDiagnosis() {
             Diagnostic IA des Maladies des Plantes
           </CardTitle>
           <CardDescription>
-            Prenez une photo de votre plante malade et laissez l&apos;IA identifier le problème.
+            Prenez une photo de votre plante malade et laissez l&apos;IA identifier le problème. Maka sary ny vola mba hahafantarana ny aretina.
           </CardDescription>
         </CardHeader>
         <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
@@ -180,7 +198,7 @@ export function AiDiagnosis() {
                   <div>
                     <p className="font-semibold">Cliquez ou glissez une image</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      PNG, JPG jusqu&apos;à 10 Mo
+                      PNG, JPG jusqu&apos;à 10 Mo — photo de feuilles, tiges ou fruits
                     </p>
                   </div>
                   <Button variant="outline" size="sm" className="gap-2 mt-1" onClick={(e) => e.stopPropagation()}>
@@ -236,30 +254,74 @@ export function AiDiagnosis() {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 rounded-xl border bg-card p-4 sm:p-6 space-y-4"
+              className="mt-6 rounded-xl border bg-card p-4 sm:p-6 space-y-5"
             >
-              <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-lg font-bold">{result.disease}</h3>
-                <Badge
-                  variant="outline"
-                  className={
-                    result.confidence > 80
-                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
-                      : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800'
-                  }
-                >
-                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                  Confiance : {result.confidence}%
-                </Badge>
+              {/* Header: Disease name + severity + confidence */}
+              <div className="flex flex-wrap items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold">{result.disease}</h3>
+                  {result.malagasyName && (
+                    <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
+                      <Leaf className="h-3.5 w-3.5" />
+                      Anarana malagasy: <span className="font-medium text-foreground">{result.malagasyName}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Badge
+                    variant="outline"
+                    className={
+                      result.confidence > 80
+                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+                        : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+                    }
+                  >
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Confiance : {result.confidence}%
+                  </Badge>
+                  {result.severity && (
+                    <Badge variant="outline" className={severityConfig[result.severity].className}>
+                      {(() => { const SIcon = severityConfig[result.severity].icon; return <SIcon className="h-3 w-3 mr-1" /> })()}
+                      {severityConfig[result.severity].label}
+                    </Badge>
+                  )}
+                </div>
               </div>
-              <div>
-                <h4 className="font-semibold text-sm mb-1">Description</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">{result.description}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm mb-1">Traitement recommandé</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">{result.treatment}</p>
-              </div>
+
+              <Separator />
+
+              {/* Symptoms */}
+              {result.symptoms && (
+                <div>
+                  <h4 className="font-semibold text-sm mb-1.5 flex items-center gap-1.5">
+                    <Bug className="h-4 w-4 text-amber-500" />
+                    Symptômes observés
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{result.symptoms}</p>
+                </div>
+              )}
+
+              {/* Treatment */}
+              {result.treatment && (
+                <div>
+                  <h4 className="font-semibold text-sm mb-1.5 flex items-center gap-1.5">
+                    <Shield className="h-4 w-4 text-emerald-500" />
+                    Traitement recommandé
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{result.treatment}</p>
+                </div>
+              )}
+
+              {/* Prevention */}
+              {result.prevention && (
+                <div>
+                  <h4 className="font-semibold text-sm mb-1.5 flex items-center gap-1.5">
+                    <ShieldAlert className="h-4 w-4 text-primary" />
+                    Mesures préventives
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{result.prevention}</p>
+                </div>
+              )}
             </motion.div>
           )}
         </CardContent>
