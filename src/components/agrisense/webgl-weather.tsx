@@ -281,7 +281,7 @@ export function WebGLWeatherOverlay({ weatherType }: { weatherType: string }) {
   }, [mappedType])
 
   const rainCanvasRef = useRef<HTMLCanvasElement>(null)
-  const [lightning, setLightning] = useState(0)
+  const [lightningIntensity, setLightningIntensity] = useState(0)
 
   useEffect(() => {
     if (mappedType !== "rainy" && mappedType !== "stormy") return;
@@ -298,28 +298,127 @@ export function WebGLWeatherOverlay({ weatherType }: { weatherType: string }) {
     canvas.height = height
 
     let particles: any[] = []
-    const count = mappedType === "stormy" ? 400 : 150
+    let splashes: any[] = []
+    let lightningBolts: any[] = []
+    
+    const isStorm = mappedType === "stormy"
+    const count = isStorm ? 600 : 250
 
     for (let i = 0; i < count; i++) {
         particles.push({
-          x: Math.random() * width, y: Math.random() * height - height,
-          l: Math.random() * 1 + 10, xs: (Math.random() * 4 - 2),
-          ys: Math.random() * 10 + 15, opacity: Math.random() * 0.4 + 0.2
+          x: Math.random() * width, 
+          y: Math.random() * height - height,
+          l: Math.random() * 20 + 20, 
+          xs: (Math.random() * 2 - 1) + (isStorm ? 3 : 1), 
+          ys: Math.random() * 15 + 25, 
+          opacity: Math.random() * 0.4 + 0.1,
+          thickness: Math.random() * 1.5 + 0.5
         })
+    }
+
+    let lastLightningTime = 0;
+    
+    function createLightning() {
+      const x = Math.random() * width;
+      const branches = [];
+      let currentX = x;
+      let currentY = 0;
+      
+      branches.push([{x: currentX, y: currentY}]);
+      
+      for(let i=0; i < 15; i++) {
+        currentY += Math.random() * 60 + 20;
+        currentX += (Math.random() - 0.5) * 120;
+        branches[0].push({x: currentX, y: currentY});
+        
+        if (Math.random() > 0.6) {
+           let bx = currentX;
+           let by = currentY;
+           let branch = [{x: bx, y: by}];
+           for(let j=0; j < 5; j++) {
+             by += Math.random() * 50 + 10;
+             bx += (Math.random() - 0.5) * 90;
+             branch.push({x: bx, y: by});
+           }
+           branches.push(branch);
+        }
+      }
+      return { branches, life: 1.0 };
     }
 
     const loop = () => {
       ctx.clearRect(0, 0, width, height)
+      
+      if (isStorm) {
+        if (Math.random() < 0.01 && Date.now() - lastLightningTime > 2500) {
+           lightningBolts.push(createLightning());
+           lastLightningTime = Date.now();
+           setLightningIntensity(0.7);
+           setTimeout(() => setLightningIntensity(0), 80);
+           if (Math.random() > 0.5) {
+             setTimeout(() => {
+               setLightningIntensity(0.9);
+               setTimeout(() => setLightningIntensity(0), 80);
+             }, 150);
+           }
+        }
+        
+        for (let i = lightningBolts.length - 1; i >= 0; i--) {
+          const bolt = lightningBolts[i];
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(220, 230, 255, ${bolt.life})`;
+          ctx.lineWidth = 3 * bolt.life;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = "#ffffff";
+          
+          for (const branch of bolt.branches) {
+            ctx.moveTo(branch[0].x, branch[0].y);
+            for (let j = 1; j < branch.length; j++) {
+               ctx.lineTo(branch[j].x, branch[j].y);
+            }
+          }
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          
+          bolt.life -= 0.08;
+          if (bolt.life <= 0) lightningBolts.splice(i, 1);
+        }
+      }
+
+      ctx.lineCap = 'round';
       for (let p of particles) {
           ctx.beginPath()
           ctx.moveTo(p.x, p.y)
-          ctx.lineTo(p.x + p.xs, p.y + p.l + p.ys)
-          ctx.strokeStyle = `rgba(200, 220, 255, ${p.opacity})`
-          ctx.lineWidth = 1.5
+          ctx.lineTo(p.x + p.xs, p.y + p.l)
+          const grad = ctx.createLinearGradient(p.x, p.y, p.x + p.xs, p.y + p.l);
+          grad.addColorStop(0, `rgba(255, 255, 255, 0)`);
+          grad.addColorStop(1, `rgba(200, 220, 255, ${p.opacity})`);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = p.thickness
           ctx.stroke()
           p.x += p.xs; p.y += p.ys
-          if (p.y > height) { p.x = Math.random() * width; p.y = -20 }
+          
+          if (p.y > height) { 
+             if (Math.random() > 0.4) {
+                splashes.push({ x: p.x, y: height, life: 1, radius: p.thickness * 1.5 });
+             }
+             p.x = Math.random() * width; 
+             p.y = -20 - Math.random() * 100;
+          }
       }
+      
+      for (let i = splashes.length - 1; i >= 0; i--) {
+        const s = splashes[i];
+        ctx.beginPath();
+        ctx.ellipse(s.x, s.y - s.radius * 0.5, s.radius * 2, s.radius, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(200, 220, 255, ${s.life * 0.4})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        s.life -= 0.15;
+        s.radius += 0.8;
+        if (s.life <= 0) splashes.splice(i, 1);
+      }
+      
       animationFrameId = requestAnimationFrame(loop)
     }
     loop()
@@ -333,27 +432,6 @@ export function WebGLWeatherOverlay({ weatherType }: { weatherType: string }) {
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationFrameId)
     }
-  }, [mappedType])
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout
-    if (mappedType === "stormy") {
-      const lightningLoop = () => {
-        if (Math.random() < 0.02) {
-          setLightning(Math.random() * 0.6 + 0.2)
-          setTimeout(() => setLightning(0), 50)
-          if (Math.random() > 0.5) {
-            setTimeout(() => {
-              setLightning(Math.random() * 0.8 + 0.2)
-              setTimeout(() => setLightning(0), 50)
-            }, 150)
-          }
-        }
-        timeoutId = setTimeout(lightningLoop, Math.random() * 2000 + 1000)
-      }
-      lightningLoop()
-    }
-    return () => clearTimeout(timeoutId)
   }, [mappedType])
 
   return (
@@ -397,7 +475,7 @@ export function WebGLWeatherOverlay({ weatherType }: { weatherType: string }) {
 
         <canvas ref={rainCanvasRef} className="absolute inset-0 w-full h-full" style={{ opacity: (mappedType === 'rainy' || mappedType === 'stormy') ? 1 : 0, transition: 'opacity 1s' }} />
         
-        <div className="absolute inset-0 bg-white pointer-events-none mix-blend-overlay" style={{ opacity: lightning, transition: 'opacity 0.05s' }} />
+        <div className="absolute inset-0 bg-white pointer-events-none mix-blend-overlay" style={{ opacity: lightningIntensity, transition: 'opacity 0.05s' }} />
       </div>
     </>
   )
