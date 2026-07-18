@@ -1,15 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const SYSTEM_PROMPT = `Tu es un expert agronome spécialisé dans l'agriculture malgache. Analyse cette photo de plante et identifie:
-1. La maladie ou le problème (nom en français et en malagasy si possible)
-2. Le niveau de confiance (pourcentage)
-3. La sévérité (faible, moyen, élevé, critique)
-4. Les symptômes observés
-5. Le traitement recommandé (produits accessibles à Madagascar)
-6. Les mesures préventives
-7. Le nom malagasy de la plante si identifiable
+const SYSTEM_PROMPT = `Tu es un expert agronome malgache. Analyse la photo fournie (plante, champ, sol, maladie) et réponds ENTIÈREMENT EN MALAGASY (avec les termes techniques ou noms en français entre parenthèses).
 
-Réponds en JSON valide avec les clés: disease, confidence, severity, symptoms, treatment, prevention, malagasyName`
+Directives d'analyse :
+Si c'est une plante malade :
+- disease : Nom de la maladie
+- severity : 'low' (faible), 'medium', 'high', 'critical'
+- symptoms : Les symptômes observés
+- treatment : Le traitement recommandé
+- prevention : Les mesures préventives
+
+Si c'est une plante saine ou une culture :
+- disease : Nom de la plante/culture
+- severity : 'low' (qui s'affichera comme "Azo ekena" / Bon état)
+- symptoms : État de santé, stade de croissance
+- treatment : Conseils d'entretien (engrais, arrosage)
+- prevention : Bonnes pratiques agricoles
+
+Si c'est un sol ou un terrain :
+- disease : Type de sol ou terrain
+- severity : 'low' (si bon pour culture) ou 'medium'/'high' (si aride/pauvre)
+- symptoms : Caractéristiques du sol observées
+- treatment : Cultures recommandées pour ce type de terrain
+- prevention : Comment améliorer ou préparer ce sol
+
+Dans tous les cas :
+Réponds en JSON valide avec EXACTEMENT ces clés: { "disease": "", "confidence": 0-100, "severity": "low|medium|high|critical", "symptoms": "", "treatment": "", "prevention": "", "malagasyName": "" }`
 
 interface DiagnosisResponse {
   disease: string
