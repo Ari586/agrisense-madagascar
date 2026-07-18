@@ -71,18 +71,36 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
         className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-emerald-600/20 rounded-full blur-[120px] translate-y-1/3 -translate-x-1/3 pointer-events-none"
       />
       
-      {/* 3D Farmer Image (Floats smoothly) */}
-      <motion.div
-        animate={{ y: [0, -15, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 mt-12 mb-8 drop-shadow-[0_20px_30px_rgba(16,185,129,0.3)]"
-      >
-        <img 
-          src="/assets/farmer_3d.png" 
-          alt="3D Farmer Mascot" 
-          className="w-full h-full object-contain"
+      {/* 3D Farmer Image (Floats, Breathes, and Swings) */}
+      <div className="relative z-10 mt-12 mb-8 flex flex-col items-center">
+        <motion.div
+          animate={{ 
+            y: [0, -18, 0],
+            rotateZ: [-2, 2, -2]
+          }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-56 h-56 sm:w-64 sm:h-64 drop-shadow-[0_20px_40px_rgba(16,185,129,0.4)] relative z-10"
+        >
+          <motion.img 
+            src="/assets/farmer_3d.png" 
+            alt="3D Farmer Mascot" 
+            className="w-full h-full object-contain"
+            animate={{ 
+              scaleY: [1, 1.02, 1], 
+              scaleX: [1, 0.99, 1] 
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: 'bottom center' }}
+          />
+        </motion.div>
+        
+        {/* Dynamic Floor Shadow */}
+        <motion.div 
+          animate={{ scale: [1, 0.7, 1], opacity: [0.6, 0.2, 0.6] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-28 h-5 bg-black/80 blur-md rounded-[100%] absolute -bottom-4 z-0"
         />
-      </motion.div>
+      </div>
 
       <div className="relative z-10 flex flex-col items-center justify-between w-full max-w-md px-6 flex-1 pb-12">
         
