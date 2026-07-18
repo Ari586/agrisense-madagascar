@@ -512,6 +512,16 @@ export function ToetrandroTab() {
     }
   }) : staticData.forecast
 
+  const generateAlert = (temp: number, wind: number, rain: number) => {
+    if (wind > 50) return { title: "RIVO-DOZA", text: "Mitandrema, misy rivotra mahery be andrasana! Hamafiso ny tafo ary arovy ny voly.", icon: "🌪️", borderClass: "border-red-500" }
+    if (rain > 30) return { title: "ORAM-BE", text: "Mety hisy tondra-drano. Ataovy tsara ny lakan-drano hamoahana ny rano be loatra amin'ny voly.", icon: "⚠️", borderClass: "border-orange-500" }
+    if (temp > 35) return { title: "HAFANANA", text: "Mafana loatra ny andro. Mila tondrahana matetika kokoa ny voly hisorohana ny hain-tany.", icon: "🔥", borderClass: "border-red-500" }
+    if (temp < 10) return { title: "HATSIAKA", text: "Mety hisy fanala, arovy ny voly saropady.", icon: "❄️", borderClass: "border-blue-400" }
+    return { title: "TSARA NY ANDRO", text: "Tena tsara ny toetrandro ho an'ny fambolena androany. Afaka manao ny asa andavanandro.", icon: "✅", borderClass: "border-emerald-500" }
+  }
+
+  const liveAlert = generateAlert(currentTemp, currentWind, currentRain)
+
   const data = { 
     ...staticData, 
     temp: currentTemp, 
@@ -522,7 +532,8 @@ export function ToetrandroTab() {
     forecast: forecast,
     soil: { ...staticData.soil, val: liveIotData?.soilMoisture ?? staticData.soil.val },
     rain: { ...staticData.rain, val: currentRain, prob: currentProb }, 
-    wind: { ...staticData.wind, val: currentWind } 
+    wind: { ...staticData.wind, val: currentWind },
+    alert: liveAlert
   }
 
   const userRegionImages: Record<string, string> = {
