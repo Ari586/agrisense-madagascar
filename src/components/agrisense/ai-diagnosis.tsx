@@ -51,19 +51,46 @@ export function AiDiagnosis() {
       setError('Veuillez sélectionner un fichier image valide.')
       return
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setError('L\'image ne doit pas dépasser 10 Mo.')
-      return
-    }
     setError(null)
     setResult(null)
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string
-      setImagePreview(dataUrl)
-      setImageBase64(dataUrl.split(',')[1])
+
+    const img = new Image()
+    const objectUrl = URL.createObjectURL(file)
+    
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl)
+      
+      const canvas = document.createElement('canvas')
+      let width = img.width
+      let height = img.height
+      const maxSize = 800
+
+      if (width > height && width > maxSize) {
+        height = Math.round((height * maxSize) / width)
+        width = maxSize
+      } else if (height > maxSize) {
+        width = Math.round((width * maxSize) / height)
+        height = maxSize
+      }
+
+      canvas.width = width
+      canvas.height = height
+
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
+        setImagePreview(dataUrl)
+        setImageBase64(dataUrl.split(',')[1])
+      } else {
+        setError('Erreur lors du traitement de l\'image.')
+      }
     }
-    reader.readAsDataURL(file)
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl)
+      setError('Impossible de lire l\'image.')
+    }
+    img.src = objectUrl
   }, [])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
