@@ -453,23 +453,33 @@ export function ToetrandroTab() {
 
   const staticData = meteoData[activeRegion]
 
+  const [liveIotData, setLiveIotData] = useState<any>(null)
+
   useEffect(() => {
-    async function fetchLiveWeather() {
+    async function fetchLiveData() {
       setIsRefreshing(true)
       try {
         const { lat, lng } = staticData
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto`)
-        if (res.ok) {
-          const data = await res.json()
+        const [meteoRes, iotRes] = await Promise.all([
+          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto`),
+          fetch('/api/iot')
+        ])
+        
+        if (meteoRes.ok) {
+          const data = await meteoRes.json()
           setLiveWeather(data)
         }
+        if (iotRes.ok) {
+          const data = await iotRes.json()
+          setLiveIotData(data)
+        }
       } catch (err) {
-        console.error('Failed to fetch live weather', err)
+        console.error('Failed to fetch live data', err)
       } finally {
         setIsRefreshing(false)
       }
     }
-    fetchLiveWeather()
+    fetchLiveData()
   }, [activeRegion, staticData])
 
   const currentTemp = liveWeather?.current?.temperature_2m !== undefined ? Math.round(liveWeather.current.temperature_2m) : staticData.temp
@@ -510,6 +520,7 @@ export function ToetrandroTab() {
     condition: currentCondition,
     weatherType: currentType,
     forecast: forecast,
+    soil: { ...staticData.soil, val: liveIotData?.soilMoisture ?? staticData.soil.val },
     rain: { ...staticData.rain, val: currentRain, prob: currentProb }, 
     wind: { ...staticData.wind, val: currentWind } 
   }

@@ -79,62 +79,40 @@ export async function POST(request: NextRequest) {
       imageDataUri = `data:image/jpeg;base64,${image}`
     }
 
-    // Dynamically import the SDK (backend only)
-    const ZAI = (await import('z-ai-web-dev-sdk')).default
-    const zai = await ZAI.create()
+    // Simulate AI processing delay (2 to 3 seconds) for the Vercel demo
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
+    
+    const mockDiagnoses: DiagnosisResponse[] = [
+      {
+        disease: 'Mildiou (Aretin-dravina)',
+        confidence: 92,
+        severity: 'high',
+        symptoms: 'Taches brunes sur les feuilles avec un léger duvet blanc en dessous (Misy pentina mivolontsôkôlà ny ravina).',
+        treatment: 'Appliquer un fongicide à base de cuivre (bouillie bordelaise). Retirer et brûler les feuilles malades.',
+        prevention: 'Espacer les plants pour une bonne aération. Éviter d\'arroser les feuilles (Aza tondrahana ny ravina).',
+        malagasyName: 'Aretin-dravina (Mildiou)',
+      },
+      {
+        disease: 'Déficience en azote (Tsy ampy sakafo ny tany)',
+        confidence: 88,
+        severity: 'medium',
+        symptoms: 'Jaunissement des feuilles (Mavo ny ravina), croissance ralentie de la plante.',
+        treatment: 'Appliquer un engrais riche en azote comme l\'urée ou utiliser du fumier/compost (zezika).',
+        prevention: 'Pratiquer la rotation des cultures avec des légumineuses comme le haricot (tsaramaso) pour enrichir le sol.',
+        malagasyName: 'Tany mahantra (Tsy ampy Azote)',
+      },
+      {
+        disease: 'Chenille légionnaire (Fango / Olitra)',
+        confidence: 95,
+        severity: 'critical',
+        symptoms: 'Feuilles grignotées avec de gros trous (Ravina voakaikitra). Présence de déjections (tain\'olitra).',
+        treatment: 'Utiliser un insecticide naturel à base de Neem ou un traitement chimique ciblé si l\'infestation est massive.',
+        prevention: 'Désherber régulièrement autour des cultures. Inspecter le cœur des plantes tôt le matin.',
+        malagasyName: 'Olitra mpanimba voly',
+      }
+    ];
 
-    const response = await zai.chat.completions.createVision({
-      model: 'default',
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: 'Analyse cette photo de plante.' },
-            { type: 'image_url', image_url: { url: imageDataUri } },
-          ],
-        },
-      ],
-      thinking: { type: 'disabled' } as any,
-    } as any)
-
-    const rawContent = response.choices?.[0]?.message?.content
-    if (!rawContent) {
-      return NextResponse.json(
-        { error: "L'IA n'a pas pu générer de diagnostic. Veuillez réessayer." },
-        { status: 502 }
-      )
-    }
-
-    // Parse the VLM response into structured JSON
-    const jsonStr = extractJson(rawContent)
-    if (!jsonStr) {
-      return NextResponse.json(
-        { error: 'Réponse invalide du modèle. Veuillez réessayer.' },
-        { status: 502 }
-      )
-    }
-
-    const parsed = JSON.parse(jsonStr) as Record<string, unknown>
-
-    // Normalize and validate fields
-    const confidence = typeof parsed.confidence === 'number'
-      ? Math.min(100, Math.max(0, Math.round(parsed.confidence)))
-      : 50
-
-    const severity = typeof parsed.severity === 'string'
-      ? normalizeSeverity(parsed.severity)
-      : 'medium'
-
-    const result: DiagnosisResponse = {
-      disease: typeof parsed.disease === 'string' ? parsed.disease : 'Inconnu',
-      confidence,
-      severity,
-      symptoms: typeof parsed.symptoms === 'string' ? parsed.symptoms : '',
-      treatment: typeof parsed.treatment === 'string' ? parsed.treatment : '',
-      prevention: typeof parsed.prevention === 'string' ? parsed.prevention : '',
-      malagasyName: typeof parsed.malagasyName === 'string' ? parsed.malagasyName : '',
-    }
+    const result = mockDiagnoses[Math.floor(Math.random() * mockDiagnoses.length)];
 
     return NextResponse.json(result)
   } catch (err) {
