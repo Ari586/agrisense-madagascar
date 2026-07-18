@@ -63,13 +63,18 @@ float perlin3(vec3 p){
   return mix(nxy0, nxy1, u.z) * 0.5 + 0.5;
 }
 
-float fbm(vec3 p, int octaves){
-  float total = 0.0, amp = 0.55, freq = 1.0, maxAmp = 0.0;
+float fbm(vec3 p, int octaves, bool billowy){
+  float total = 0.0, amp = 0.5, freq = 1.0, maxAmp = 0.0;
   for (int i=0; i<6; i++){
     if (i >= octaves) break;
-    total += perlin3(p*freq) * amp;
+    float n = perlin3(p * freq);
+    if (billowy) {
+      n = n * 2.0 - 1.0;
+      n = 1.0 - abs(n);
+    }
+    total += n * amp;
     maxAmp += amp;
-    amp *= 0.55;
+    amp *= 0.5;
     freq *= 2.0;
   }
   return total / maxAmp;
@@ -85,33 +90,48 @@ void main(){
   uv.x *= uAspect;
 
   float t = uTime * uSpeed * 0.05;
-  vec3 p = vec3(uv.x*1.6, uv.y*1.6, 0.0);
+  vec3 p = vec3(uv.x*2.0, uv.y*2.0, 0.0); // Scale up for smaller clouds
 
+  // Base warping
   vec2 warp = vec2(
-    fbm(vec3(p.x*0.6 + t*0.5, p.y*0.6, t*0.25), 2),
-    fbm(vec3(p.x*0.6, p.y*0.6 + t*0.4, -t*0.3), 2)
+    fbm(vec3(p.x*0.5 + t*0.5, p.y*0.5, t*0.2), 2, false),
+    fbm(vec3(p.x*0.5, p.y*0.5 + t*0.4, -t*0.3), 2, false)
   );
-  vec3 wp = vec3(p.x + warp.x*uWarp, p.y + warp.y*uWarp, t*0.6);
-  float n = fbm(wp, 5);
-
+  
+  vec3 wp = vec3(p.x + warp.x*uWarp, p.y + warp.y*uWarp, t*0.5);
+  
+  // Use billowy noise for main cloud shapes (cumulus)
+  float n = fbm(wp, 6, true);
+  
+  // Flat base attenuation
   float vf = 1.0 - vUv.y;
-  float baseCut = mix(1.0, 1.0 - smoothstepc(uBaseline-0.02, uBaseline+0.10, vf), uFlatBase);
+  float baseCut = mix(1.0, 1.0 - smoothstepc(uBaseline-0.05, uBaseline+0.15, vf), uFlatBase);
 
+  // Cloud coverage threshold
   float lo = uDensity - uSoftness, hi = uDensity + uSoftness;
   float a = smoothstepc(lo, hi, n) * baseCut;
 
-  float eps = 0.025;
-  float n2 = fbm(wp + vec3(eps,0.0,0.0), 5);
-  float n3 = fbm(wp + vec3(0.0,eps,0.0), 5);
-  float dx = n2-n, dy = n3-n;
-  float shade = clamp(0.5 + (dx*uLightDir.x + dy*uLightDir.y) * uLightStrength, 0.0, 1.0);
-  vec3 cloudCol = clamp(mix(uCloudColor*0.6, uCloudColor*1.45, shade), 0.0, 1.0);
+  // Directional lighting
+  // Sample towards the light source for shadow
+  vec3 lightOffset = vec3(uLightDir.x, uLightDir.y, 0.0) * 0.05;
+  float nLight = fbm(wp - lightOffset, 5, true);
+  
+  // If the noise towards the light is denser, this pixel is in shadow
+  float shade = clamp((n - nLight) * uLightStrength * 4.0 + 0.6, 0.0, 1.0);
+  
+  // Add a fake ambient occlusion based on density (denser = darker core)
+  float ao = clamp(1.0 - (n - lo) * 1.5, 0.3, 1.0);
+  
+  vec3 cloudCol = uCloudColor * shade * ao;
+  // Increase brightness on lit areas
+  cloudCol = mix(cloudCol, uCloudColor * 1.5, clamp(shade - 0.7, 0.0, 1.0));
 
-  vec3 hp = vec3(uv.x*uHiStretch*0.4 + t*1.4, uv.y*2.4, t*0.4);
-  float hn = fbm(hp, 4);
-  float ha = smoothstepc(uHiCoverage-0.22, uHiCoverage+0.22, hn) * uHiMax;
+  // High altitude cirrus clouds (standard fbm)
+  vec3 hp = vec3(uv.x*uHiStretch*0.5 + t*1.2, uv.y*3.0, t*0.3);
+  float hn = fbm(hp, 4, false);
+  float ha = smoothstepc(uHiCoverage-0.2, uHiCoverage+0.2, hn) * uHiMax;
 
-  float cloudAlpha = clamp(a*uMaxAlpha, 0.0, 1.0);
+  float cloudAlpha = clamp(a * uMaxAlpha, 0.0, 1.0);
   float hiAlpha = clamp(ha, 0.0, 1.0);
   
   float totalAlpha = max(cloudAlpha, hiAlpha);
