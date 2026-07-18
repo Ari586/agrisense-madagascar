@@ -188,7 +188,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
         initial={{ opacity: 0, y: -20, scale: 0.8 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.3, type: 'spring' }}
-        className="absolute top-6 left-6 w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white p-1.5 shadow-xl z-20 flex items-center justify-center overflow-hidden"
+        className="absolute top-6 left-6 w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-white p-2 shadow-xl z-20 flex items-center justify-center overflow-hidden"
       >
         <img src="/assets/DRPMA.png" alt="DRPMA Logo" className="w-full h-full object-contain rounded-full" />
       </motion.div>
@@ -197,7 +197,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
         initial={{ opacity: 0, y: -20, scale: 0.8 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.4, type: 'spring' }}
-        className="absolute top-6 right-6 w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white p-1.5 shadow-xl z-20 flex items-center justify-center overflow-hidden"
+        className="absolute top-6 right-6 w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-white p-2 shadow-xl z-20 flex items-center justify-center overflow-hidden"
       >
         <img src="/assets/MiASA.png" alt="MiASA Logo" className="w-full h-full object-contain rounded-full" />
       </motion.div>
