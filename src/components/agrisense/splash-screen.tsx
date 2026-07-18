@@ -63,12 +63,12 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
       <motion.div 
         animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-0 right-0 w-[30rem] h-[30rem] bg-green-500/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"
+        className="absolute top-0 right-0 w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-green-500/20 rounded-full blur-[60px] sm:blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"
       />
       <motion.div 
         animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.2, 0.1] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-emerald-600/20 rounded-full blur-[120px] translate-y-1/3 -translate-x-1/3 pointer-events-none"
+        className="absolute bottom-0 left-0 w-[30rem] h-[30rem] sm:w-[40rem] sm:h-[40rem] bg-emerald-600/20 rounded-full blur-[60px] sm:blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none"
       />
       
       {/* 3D Farmer Image (Pacing Left and Right) */}
