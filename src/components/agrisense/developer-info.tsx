@@ -22,7 +22,7 @@ export function DeveloperInfo() {
         <Button
           variant="ghost"
           size="icon"
-          className="fixed bottom-4 left-4 z-50 h-12 w-12 rounded-full bg-transparent text-primary hover:bg-primary/10"
+          className="fixed bottom-24 sm:bottom-4 left-4 z-[40] h-12 w-12 rounded-full bg-transparent text-primary hover:bg-primary/10"
           aria-label="A propos"
         >
           <Info className="h-6 w-6" />
