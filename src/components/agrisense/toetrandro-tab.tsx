@@ -432,6 +432,17 @@ const regionNameMapping: Record<string, string> = {
     'androy': 'Androy', 'anosy': 'Anosy' 
 }
 
+function parseWMO(code: number) {
+  if (code === 0) return { condition: "Masoandro be", type: "clear", icon: "☀️", prob: "10%" };
+  if (code === 1 || code === 2) return { condition: "Somary mandrahona", type: "cloudy", icon: "⛅", prob: "20%" };
+  if (code === 3) return { condition: "Mandrahona", type: "cloudy", icon: "☁️", prob: "40%" };
+  if (code === 45 || code === 48) return { condition: "Zavona", type: "cloudy", icon: "🌫️", prob: "30%" };
+  if (code >= 51 && code <= 67) return { condition: "Orana", type: "rainy", icon: "🌧️", prob: "90%" };
+  if (code >= 80 && code <= 82) return { condition: "Oram-baratra", type: "rainy", icon: "🌦️", prob: "80%" };
+  if (code >= 95) return { condition: "Rivo-doza", type: "stormy", icon: "⛈️", prob: "100%" };
+  return { condition: "Masoandro be", type: "clear", icon: "☀️", prob: "10%" };
+}
+
 export function ToetrandroTab() {
   const [activeRegion, setActiveRegion] = useState('Vakinankaratra')
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -447,7 +458,7 @@ export function ToetrandroTab() {
       setIsRefreshing(true)
       try {
         const { lat, lng } = staticData
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`)
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto`)
         if (res.ok) {
           const data = await res.json()
           setLiveWeather(data)
@@ -461,11 +472,45 @@ export function ToetrandroTab() {
     fetchLiveWeather()
   }, [activeRegion, staticData])
 
-  const currentTemp = liveWeather?.current?.temperature_2m ?? staticData.temp
+  const currentTemp = liveWeather?.current?.temperature_2m !== undefined ? Math.round(liveWeather.current.temperature_2m) : staticData.temp
   const currentRain = liveWeather?.current?.precipitation ?? staticData.rain.val
   const currentWind = liveWeather?.current?.wind_speed_10m ?? staticData.wind.val
+  const currentMax = liveWeather?.daily?.temperature_2m_max ? Math.round(liveWeather.daily.temperature_2m_max[0]) : staticData.max
+  const currentMin = liveWeather?.daily?.temperature_2m_min ? Math.round(liveWeather.daily.temperature_2m_min[0]) : staticData.min
 
-  const data = { ...staticData, temp: currentTemp, rain: { ...staticData.rain, val: currentRain }, wind: { ...staticData.wind, val: currentWind } }
+  const currentWmo = liveWeather?.current?.weathercode !== undefined ? parseWMO(liveWeather.current.weathercode) : null
+  const currentCondition = currentWmo?.condition ?? staticData.condition
+  const currentType = currentWmo?.type ?? staticData.weatherType
+  const currentProb = currentWmo?.prob ?? staticData.rain.prob
+
+  const forecast = liveWeather?.daily?.time ? liveWeather.daily.time.slice(0, 7).map((t: string, i: number) => {
+    let dayName = ""
+    if (i === 0) dayName = "Anio"
+    else if (i === 1) dayName = "Rahampitso"
+    else {
+      const d = new Date(t)
+      const days = ['Alahady', 'Alatsinainy', 'Talata', 'Alarobia', 'Alakamisy', 'Zoma', 'Sabotsy']
+      dayName = days[d.getDay()]
+    }
+    const wmo = parseWMO(liveWeather.daily.weathercode[i])
+    return {
+      day: dayName,
+      icon: wmo.icon,
+      temp: `${Math.round(liveWeather.daily.temperature_2m_max[i])}°`
+    }
+  }) : staticData.forecast
+
+  const data = { 
+    ...staticData, 
+    temp: currentTemp, 
+    max: currentMax,
+    min: currentMin,
+    condition: currentCondition,
+    weatherType: currentType,
+    forecast: forecast,
+    rain: { ...staticData.rain, val: currentRain, prob: currentProb }, 
+    wind: { ...staticData.wind, val: currentWind } 
+  }
 
   const userRegionImages: Record<string, string> = {
     "AlaotraMangoro": "/assets/regions/AlaotraMangoro.jpg",
