@@ -143,192 +143,14 @@ void main(){
   gl_FragColor = vec4(col, alpha);
 }
 `;
-
 const hexToRgb = (h: string) => { 
   const n = parseInt(h.slice(1),16); 
   return [((n>>16)&255)/255, ((n>>8)&255)/255, (n&255)/255]; 
 };
 
-function CloudyWebGLCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: false }) as WebGLRenderingContext | null;
-    if (!gl) return;
-
-    function compile(type: number, src: string) {
-      const sh = gl!.createShader(type)!;
-      gl!.shaderSource(sh, src);
-      gl!.compileShader(sh);
-      return sh;
-    }
-
-    const prog = gl.createProgram()!;
-    gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
-    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
-    gl.linkProgram(prog);
-    gl.useProgram(prog);
-
-    const quad = new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]);
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
-    const aPos = gl.getAttribLocation(prog, 'aPos');
-    gl.enableVertexAttribArray(aPos);
-    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
-
-    const U: Record<string, WebGLUniformLocation | null> = {};
-    ['uTime','uAspect','uSkyTop','uSkyBottom','uSkyAlpha','uCloudColor','uDensity','uSoftness','uSpeed','uWarp',
-     'uBaseline','uFlatBase','uLightDir','uLightStrength','uMaxAlpha','uHiColor','uHiCoverage','uHiSpeed','uHiStretch','uHiMax']
-     .forEach(name => { U[name] = gl.getUniformLocation(prog, name); });
-
-    const wState = {
-        skyTop: hexToRgb("#7f8a99"), skyBottom: hexToRgb("#b6bfc9"),
-        cloudColor: hexToRgb("#d5dae0"), hiColor: hexToRgb("#dce0e4"),
-        density: 0.40, softness: 0.42, speed: 0.09, warp: 0.55,
-        baseline: 0.5, flatBase: 0, skyAlpha: 0.1,
-        lightDir: [-0.4, -0.9], lightStrength: 0.8, maxAlpha: 0.6,
-        hiCoverage: 0.75, hiSpeed: 0.3, hiStretch: 1.4, hiMax: 0.1
-    };
-
-    let animationId: number;
-    const startTime = performance.now();
-
-    function resize(){
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
-      const w = Math.floor(window.innerWidth * dpr);
-      const h = Math.floor(window.innerHeight * dpr);
-      if (canvas!.width !== w || canvas!.height !== h) {
-        canvas!.width = w; canvas!.height = h;
-        gl!.viewport(0, 0, w, h);
-      }
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    function frame(now: number){
-      resize();
-      gl!.uniform1f(U.uTime, (now - startTime) / 1000);
-      gl!.uniform1f(U.uAspect, canvas!.width / canvas!.height);
-      gl!.uniform3fv(U.uSkyTop, wState.skyTop);
-      gl!.uniform3fv(U.uSkyBottom, wState.skyBottom);
-      gl!.uniform1f(U.uSkyAlpha, wState.skyAlpha);
-      gl!.uniform3fv(U.uCloudColor, wState.cloudColor);
-      gl!.uniform1f(U.uDensity, wState.density);
-      gl!.uniform1f(U.uSoftness, wState.softness);
-      gl!.uniform1f(U.uSpeed, wState.speed);
-      gl!.uniform1f(U.uWarp, wState.warp);
-      gl!.uniform1f(U.uBaseline, wState.baseline);
-      gl!.uniform1f(U.uFlatBase, wState.flatBase);
-      gl!.uniform2fv(U.uLightDir, wState.lightDir);
-      gl!.uniform1f(U.uLightStrength, wState.lightStrength);
-      gl!.uniform1f(U.uMaxAlpha, wState.maxAlpha);
-      gl!.uniform3fv(U.uHiColor, wState.hiColor);
-      gl!.uniform1f(U.uHiCoverage, wState.hiCoverage);
-      gl!.uniform1f(U.uHiSpeed, wState.hiSpeed);
-      gl!.uniform1f(U.uHiStretch, wState.hiStretch);
-      gl!.uniform1f(U.uHiMax, wState.hiMax);
-
-      gl!.drawArrays(gl!.TRIANGLES, 0, 6);
-      animationId = requestAnimationFrame(frame);
-    }
-    animationId = requestAnimationFrame(frame);
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationId);
-    }
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 z-[1] w-full h-full transition-opacity duration-1000 opacity-65" />;
-}
+import { WebGLWeatherOverlay } from './webgl-weather';
 
 export function WeatherBackground({ bgUrl, weatherType }: { bgUrl: string, weatherType: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [lightning, setLightning] = useState(0)
-
-  useEffect(() => {
-    if (weatherType === "highlands") return;
-
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    let animationFrameId: number
-    let width = window.innerWidth
-    let height = window.innerHeight
-    canvas.width = width
-    canvas.height = height
-
-    let particles: any[] = []
-    let mode = "none"
-
-    if (weatherType === "humid_rain" || weatherType === "rainy") mode = "rain"
-    else if (weatherType === "stormy") mode = "heavy_rain"
-
-    const count = mode === "heavy_rain" ? 400 : mode === "rain" ? 150 : 0
-
-    for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * width, y: Math.random() * height - height,
-          l: Math.random() * 1 + 10, xs: (Math.random() * 4 - 2),
-          ys: Math.random() * 10 + 15, opacity: Math.random() * 0.4 + 0.2
-        })
-    }
-
-    const loop = () => {
-      ctx.clearRect(0, 0, width, height)
-      for (let p of particles) {
-          ctx.beginPath()
-          ctx.moveTo(p.x, p.y)
-          ctx.lineTo(p.x + p.xs, p.y + p.l + p.ys)
-          ctx.strokeStyle = `rgba(200, 220, 255, ${p.opacity})`
-          ctx.lineWidth = 1.5
-          ctx.stroke()
-          p.x += p.xs; p.y += p.ys
-          if (p.y > height) { p.x = Math.random() * width; p.y = -20 }
-      }
-      animationFrameId = requestAnimationFrame(loop)
-    }
-    loop()
-
-    const handleResize = () => {
-      width = window.innerWidth; height = window.innerHeight
-      canvas.width = width; canvas.height = height
-    }
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      cancelAnimationFrame(animationFrameId)
-    }
-  }, [weatherType])
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout
-    if (weatherType === "stormy") {
-      const lightningLoop = () => {
-        if (Math.random() < 0.02) {
-          setLightning(Math.random() * 0.6 + 0.2)
-          setTimeout(() => setLightning(0), 50)
-          if (Math.random() > 0.5) {
-            setTimeout(() => {
-              setLightning(Math.random() * 0.8 + 0.2)
-              setTimeout(() => setLightning(0), 50)
-            }, 150)
-          }
-        }
-        timeoutId = setTimeout(lightningLoop, 100)
-      }
-      lightningLoop()
-    } else {
-      setLightning(0)
-    }
-    return () => clearTimeout(timeoutId)
-  }, [weatherType])
-
   return (
     <div className="fixed inset-0 z-[-10] overflow-hidden bg-transparent pointer-events-none">
       <style>{`
@@ -344,16 +166,7 @@ export function WeatherBackground({ bgUrl, weatherType }: { bgUrl: string, weath
         <div className="absolute inset-0 bg-gradient-to-b from-[#06101e]/60 via-[#06101e]/30 to-[#06101e]/90" />
       </div>
       
-      {weatherType === "highlands" ? (
-        <CloudyWebGLCanvas />
-      ) : (
-        <canvas ref={canvasRef} className="absolute inset-0 z-[1] transition-opacity duration-1000" />
-      )}
-      
-      <div 
-        className="absolute inset-0 z-[2] bg-white pointer-events-none transition-opacity duration-75"
-        style={{ opacity: lightning }}
-      />
+      <WebGLWeatherOverlay weatherType={weatherType} />
     </div>
   )
 }
@@ -432,11 +245,15 @@ const regionNameMapping: Record<string, string> = {
     'androy': 'Androy', 'anosy': 'Anosy' 
 }
 
-function parseWMO(code: number) {
-  if (code === 0) return { condition: "Masoandro be", type: "clear", icon: "☀️", prob: "10%" };
-  if (code === 1 || code === 2) return { condition: "Somary mandrahona", type: "cloudy", icon: "⛅", prob: "20%" };
+function parseWMO(code: number, isNight: boolean = false, wind: number = 0) {
+  if (code === 0) {
+    if (isNight) return { condition: "Alina mazava", type: "clear_night", icon: "🌙", prob: "10%" };
+    if (wind > 35) return { condition: "Mibaliaka, mandrivotra", type: "windy", icon: "💨", prob: "10%" };
+    return { condition: "Mibaliaka", type: "clear", icon: "☀️", prob: "10%" };
+  }
+  if (code === 1 || code === 2) return { condition: "Rahona malefaka", type: "partly_cloudy", icon: "⛅", prob: "20%" };
   if (code === 3) return { condition: "Mandrahona", type: "cloudy", icon: "☁️", prob: "40%" };
-  if (code === 45 || code === 48) return { condition: "Zavona", type: "cloudy", icon: "🌫️", prob: "30%" };
+  if (code === 45 || code === 48) return { condition: "Zavona", type: "foggy", icon: "🌫️", prob: "30%" };
   if (code >= 51 && code <= 67) return { condition: "Orana", type: "rainy", icon: "🌧️", prob: "90%" };
   if (code >= 80 && code <= 82) return { condition: "Oram-baratra", type: "rainy", icon: "🌦️", prob: "80%" };
   if (code >= 95) return { condition: "Rivo-doza", type: "stormy", icon: "⛈️", prob: "100%" };
@@ -488,7 +305,9 @@ export function ToetrandroTab() {
   const currentMax = liveWeather?.daily?.temperature_2m_max ? Math.round(liveWeather.daily.temperature_2m_max[0]) : staticData.max
   const currentMin = liveWeather?.daily?.temperature_2m_min ? Math.round(liveWeather.daily.temperature_2m_min[0]) : staticData.min
 
-  const currentWmo = liveWeather?.current?.weathercode !== undefined ? parseWMO(liveWeather.current.weathercode) : null
+  const hour = new Date().getHours()
+  const isNight = hour < 6 || hour >= 18;
+  const currentWmo = liveWeather?.current?.weathercode !== undefined ? parseWMO(liveWeather.current.weathercode, isNight, currentWind) : null
   const currentCondition = currentWmo?.condition ?? staticData.condition
   const currentType = currentWmo?.type ?? staticData.type
   const currentProb = currentWmo?.prob ?? staticData.rain.prob
@@ -669,7 +488,7 @@ export function ToetrandroTab() {
   }, []) // Run once
 
   // Update map styles on activeRegion change
-  const updateMapStyles = (regionId: string) => {
+  function updateMapStyles(regionId: string) {
     if (!L) return
 
     // Update marker CSS classes manually since Leaflet controls DOM
