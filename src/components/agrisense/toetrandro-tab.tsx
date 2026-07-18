@@ -266,7 +266,7 @@ export function WeatherBackground({ bgUrl, weatherType }: { bgUrl: string, weath
     let particles: any[] = []
     let mode = "none"
 
-    if (weatherType === "humid_rain") mode = "rain"
+    if (weatherType === "humid_rain" || weatherType === "rainy") mode = "rain"
     else if (weatherType === "stormy") mode = "heavy_rain"
 
     const count = mode === "heavy_rain" ? 400 : mode === "rain" ? 150 : 0
@@ -490,7 +490,7 @@ export function ToetrandroTab() {
 
   const currentWmo = liveWeather?.current?.weathercode !== undefined ? parseWMO(liveWeather.current.weathercode) : null
   const currentCondition = currentWmo?.condition ?? staticData.condition
-  const currentType = currentWmo?.type ?? staticData.weatherType
+  const currentType = currentWmo?.type ?? staticData.type
   const currentProb = currentWmo?.prob ?? staticData.rain.prob
 
   const forecast = liveWeather?.daily?.time ? liveWeather.daily.time.slice(0, 7).map((t: string, i: number) => {
@@ -528,7 +528,7 @@ export function ToetrandroTab() {
     max: currentMax,
     min: currentMin,
     condition: currentCondition,
-    weatherType: currentType,
+    type: currentType,
     forecast: forecast,
     soil: { ...staticData.soil, val: liveIotData?.soilMoisture ?? staticData.soil.val },
     rain: { ...staticData.rain, val: currentRain, prob: currentProb }, 
