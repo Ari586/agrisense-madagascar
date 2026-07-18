@@ -71,35 +71,42 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
         className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-emerald-600/20 rounded-full blur-[120px] translate-y-1/3 -translate-x-1/3 pointer-events-none"
       />
       
-      {/* 3D Farmer Image (Floats, Breathes, and Swings) */}
-      <div className="relative z-10 mt-12 mb-8 flex flex-col items-center">
+      {/* 3D Farmer Image (Pacing Left and Right) */}
+      <div className="relative z-10 mt-12 mb-8 flex flex-col items-center overflow-hidden w-full max-w-sm">
         <motion.div
           animate={{ 
-            y: [0, -18, 0],
-            rotateZ: [-2, 2, -2]
+            x: [-100, 100, 100, -100, -100],
+            rotateY: [0, 0, 180, 180, 0]
           }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-56 h-56 sm:w-64 sm:h-64 drop-shadow-[0_20px_40px_rgba(16,185,129,0.4)] relative z-10"
+          transition={{ 
+            duration: 8, 
+            repeat: Infinity, 
+            ease: 'linear',
+            times: [0, 0.45, 0.5, 0.95, 1]
+          }}
+          className="w-48 h-48 sm:w-56 sm:h-56 relative z-10 flex flex-col items-center"
         >
+          {/* The Farmer Character with Walking Bounce */}
           <motion.img 
             src="/assets/farmer_3d.png" 
             alt="3D Farmer Mascot" 
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain drop-shadow-[0_20px_30px_rgba(16,185,129,0.3)] relative z-10"
             animate={{ 
-              scaleY: [1, 1.02, 1], 
-              scaleX: [1, 0.99, 1] 
+              y: [0, -15, 0],
+              rotateZ: [-3, 3, -3],
+              scaleY: [1, 1.05, 1]
             }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
             style={{ transformOrigin: 'bottom center' }}
           />
+          
+          {/* Dynamic Floor Shadow tracking the character */}
+          <motion.div 
+            animate={{ scale: [1, 0.6, 1], opacity: [0.6, 0.2, 0.6] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
+            className="w-24 h-4 bg-black/80 blur-md rounded-[100%] absolute -bottom-2 z-0"
+          />
         </motion.div>
-        
-        {/* Dynamic Floor Shadow */}
-        <motion.div 
-          animate={{ scale: [1, 0.7, 1], opacity: [0.6, 0.2, 0.6] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-28 h-5 bg-black/80 blur-md rounded-[100%] absolute -bottom-4 z-0"
-        />
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-between w-full max-w-md px-6 flex-1 pb-12">
