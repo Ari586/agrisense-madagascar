@@ -70,51 +70,49 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Build the data URI — accept both raw base64 and full data URI
-    let imageDataUri: string
+    let base64Data = image;
+    let mimeType = 'image/jpeg';
     if (image.startsWith('data:')) {
-      imageDataUri = image
-    } else {
-      // Default to jpeg if no mime type detectable
-      imageDataUri = `data:image/jpeg;base64,${image}`
+      const parts = image.split(',');
+      const match = parts[0].match(/:(.*?);/);
+      if (match) {
+         mimeType = match[1];
+      }
+      base64Data = parts[1];
     }
 
-    // Simulate AI processing delay (2 to 3 seconds) for the Vercel demo
-    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
-    
-    const mockDiagnoses: DiagnosisResponse[] = [
-      {
-        disease: 'Mildiou (Aretin-dravina)',
-        confidence: 92,
-        severity: 'high',
-        symptoms: 'Taches brunes sur les feuilles avec un léger duvet blanc en dessous (Misy pentina mivolontsôkôlà ny ravina).',
-        treatment: 'Appliquer un fongicide à base de cuivre (bouillie bordelaise). Retirer et brûler les feuilles malades.',
-        prevention: 'Espacer les plants pour une bonne aération. Éviter d\'arroser les feuilles (Aza tondrahana ny ravina).',
-        malagasyName: 'Aretin-dravina (Mildiou)',
-      },
-      {
-        disease: 'Déficience en azote (Tsy ampy sakafo ny tany)',
-        confidence: 88,
-        severity: 'medium',
-        symptoms: 'Jaunissement des feuilles (Mavo ny ravina), croissance ralentie de la plante.',
-        treatment: 'Appliquer un engrais riche en azote comme l\'urée ou utiliser du fumier/compost (zezika).',
-        prevention: 'Pratiquer la rotation des cultures avec des légumineuses comme le haricot (tsaramaso) pour enrichir le sol.',
-        malagasyName: 'Tany mahantra (Tsy ampy Azote)',
-      },
-      {
-        disease: 'Chenille légionnaire (Fango / Olitra)',
-        confidence: 95,
-        severity: 'critical',
-        symptoms: 'Feuilles grignotées avec de gros trous (Ravina voakaikitra). Présence de déjections (tain\'olitra).',
-        treatment: 'Utiliser un insecticide naturel à base de Neem ou un traitement chimique ciblé si l\'infestation est massive.',
-        prevention: 'Désherber régulièrement autour des cultures. Inspecter le cœur des plantes tôt le matin.',
-        malagasyName: 'Olitra mpanimba voly',
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'Clé API Gemini non configurée sur le serveur. Veuillez ajouter GEMINI_API_KEY.' },
+        { status: 500 }
+      )
+    }
+
+    // Dynamic import to avoid edge runtime issues if any
+    const { GoogleGenerativeAI } = await import('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const imagePart = {
+      inlineData: {
+        data: base64Data,
+        mimeType
       }
-    ];
+    };
 
-    const result = mockDiagnoses[Math.floor(Math.random() * mockDiagnoses.length)];
+    const apiResult = await model.generateContent([SYSTEM_PROMPT, imagePart]);
+    const responseText = apiResult.response.text();
+    
+    const jsonStr = extractJson(responseText);
+    if (!jsonStr) {
+       throw new Error("L'IA n'a pas renvoyé de JSON valide: " + responseText);
+    }
+    
+    const parsed = JSON.parse(jsonStr) as DiagnosisResponse;
+    parsed.severity = normalizeSeverity(parsed.severity);
 
-    return NextResponse.json(result)
+    return NextResponse.json(parsed)
   } catch (err) {
     console.error('[/api/diagnose] Error:', err)
 
