@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { DashboardHero } from './dashboard-hero'
 import { Separator } from '@/components/ui/separator'
 import { WeatherAlerts } from './weather-alerts'
 import { ToetrandroTab } from './toetrandro-tab'
@@ -158,7 +159,7 @@ export function DashboardTab() {
       className="flex flex-col gap-6 lg:gap-8 pb-24 lg:pb-8"
     >
       {/* Hero Section */}
-      <DashboardHero alertCount={alertCount} />
+      <DashboardHero />
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
