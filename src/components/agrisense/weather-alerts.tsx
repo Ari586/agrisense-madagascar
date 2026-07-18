@@ -27,7 +27,7 @@ const typeIcons: Record<string, FC<{ className?: string }>> = {
 }
 
 export function WeatherAlerts({ alerts }: { alerts?: any[] }) {
-  const displayAlerts = alerts && alerts.length > 0 ? alerts : weatherAlerts
+  const displayAlerts = alerts ?? weatherAlerts
 
   return (
     <div className="relative overflow-hidden rounded-xl bg-black/40 backdrop-blur-xl shadow-xl p-6 sm:p-8 h-full flex flex-col text-white">

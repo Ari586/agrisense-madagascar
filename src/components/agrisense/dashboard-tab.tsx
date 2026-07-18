@@ -87,17 +87,18 @@ export function DashboardTab() {
   const fetchAll = async () => {
     try {
       const [sensorRes, alertsRes] = await Promise.all([
-        fetch('/api/sensors'),
-        fetch('/api/alerts'),
+        fetch('/api/sensors').catch(() => null),
+        fetch('/api/alerts').catch(() => null),
       ])
 
-      if (sensorRes.ok) setSensorData(await sensorRes.json())
-      if (alertsRes.ok) {
-        const data = await alertsRes.json()
-        setAlerts(data.alerts ?? [])
+      if (sensorRes && sensorRes.ok) {
+        sensorRes.json().then(setSensorData).catch(() => {})
       }
-    } catch {
-      // Keep existing data on error
+      if (alertsRes && alertsRes.ok) {
+        alertsRes.json().then(data => setAlerts(data.alerts ?? [])).catch(() => {})
+      }
+    } catch (err) {
+      console.error(err)
     } finally {
       setLoading(false)
     }
@@ -152,11 +153,12 @@ export function DashboardTab() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="flex flex-col gap-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col gap-6 lg:gap-8 pb-24 lg:pb-8"
     >
+      {/* Hero Section */}
+      <DashboardHero alertCount={alertCount} />
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -193,7 +195,7 @@ export function DashboardTab() {
 
       {/* Alerts + IoT Sensors */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <WeatherAlerts />
+        <WeatherAlerts alerts={alerts} />
         {sensorData && <IotSensorCard data={sensorData} />}
       </div>
 
