@@ -49,7 +49,8 @@ export function AiAssistant() {
     try {
       const recognition = new SpeechRecognition()
       recognitionRef.current = recognition
-      recognition.lang = 'fr-FR'
+      // Paramètre mg-MG pour la langue Malagasy
+      recognition.lang = 'mg-MG'
       recognition.interimResults = false
 
       recognition.onstart = () => setIsRecording(true)
