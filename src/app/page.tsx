@@ -101,37 +101,37 @@ export default function Home() {
 
           <main className="flex-1 w-full mx-auto px-2 sm:px-4 py-2 relative z-10">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col gap-4">
-              {/* Premium Tab bar - scrollable on mobile */}
-              <div className="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0 pb-4 pt-2 w-full flex justify-center custom-scrollbar">
-                <TabsList className="flex gap-2 min-w-max bg-black/40 backdrop-blur-xl border border-white/10 p-2 rounded-2xl sm:rounded-full shadow-2xl h-auto">
+              {/* Premium Tab bar - Bottom on mobile, top on desktop */}
+              <div className="fixed bottom-0 left-0 right-0 z-50 sm:static sm:z-auto w-full sm:flex sm:justify-center px-0 sm:px-0 sm:pb-4 sm:pt-2">
+                <TabsList className="flex w-full sm:w-auto justify-between sm:justify-start gap-1 sm:gap-2 bg-black/80 sm:bg-black/40 backdrop-blur-xl border-t sm:border border-white/10 p-2 sm:p-2 rounded-none sm:rounded-full shadow-2xl h-auto pb-6 sm:pb-2 pt-2 sm:pt-2">
                   {tabs.map((tab) => {
                     const isActive = activeTab === tab.value;
                     return (
                       <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className={`relative flex items-center justify-center gap-2 px-5 py-3 h-auto flex-col sm:flex-row transition-all duration-300 rounded-xl sm:rounded-full min-w-[80px] bg-transparent outline-none
-                          ${isActive ? 'text-white' : 'text-white/60 hover:text-white hover:bg-white/5'}
+                        className={`relative flex-1 sm:flex-none flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-5 py-2 sm:py-3 h-auto flex-col sm:flex-row transition-all duration-300 rounded-xl sm:rounded-full sm:min-w-[80px] bg-transparent outline-none
+                          ${isActive ? 'text-white' : 'text-white/50 hover:text-white hover:bg-white/5'}
                         `}
                       >
                         {isActive && (
                           <motion.div
                             layoutId="activeTabBackground"
-                            className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-green-400 rounded-xl sm:rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)] z-0"
+                            className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-emerald-500/20 sm:from-emerald-500 to-transparent sm:to-green-400 rounded-xl sm:rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)] z-0"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                           />
                         )}
-                        <span className="relative z-10 flex flex-col sm:flex-row items-center gap-2">
-                          <tab.icon className={`h-5 w-5 sm:h-4 sm:w-4 ${isActive ? 'drop-shadow-md' : ''}`} />
-                          <span className="font-bold tracking-wide text-[10px] sm:text-sm uppercase sm:capitalize">
+                        <span className="relative z-10 flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                          <tab.icon className={`h-5 w-5 sm:h-4 sm:w-4 ${isActive ? 'drop-shadow-md text-emerald-400 sm:text-white' : ''}`} />
+                          <span className={`font-bold tracking-wide text-[9px] sm:text-sm uppercase sm:capitalize ${isActive ? 'text-emerald-400 sm:text-white' : ''}`}>
                             {tab.label}
                           </span>
                           {/* Notification Badge */}
                           {(tab.value === 'sahako' || tab.value === 'tetiandro') && hasNotifications && (
-                            <span className="absolute top-1 right-1 sm:-top-1 sm:-right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-slate-900 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                            <span className="absolute top-0 right-2 sm:-top-1 sm:-right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-slate-900 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
                           )}
                         </span>
                       </TabsTrigger>
@@ -141,7 +141,7 @@ export default function Home() {
               </div>
 
               {/* Tab content with AnimatePresence */}
-              <div className="relative flex-1">
+              <div className="relative flex-1 pb-24 sm:pb-0">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}

@@ -27,31 +27,48 @@ export function AiAssistant() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const startRecording = () => {
-    if (typeof window === 'undefined') return
-      // @ts-ignore
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    if (!SpeechRecognition) {
-      alert("Votre navigateur ne supporte pas la reconnaissance vocale.")
+  const recognitionRef = useRef<any>(null)
+
+  const toggleRecording = () => {
+    if (isRecording && recognitionRef.current) {
+      try {
+        recognitionRef.current.stop()
+      } catch (e) {}
+      setIsRecording(false)
       return
     }
 
-    const recognition = new SpeechRecognition()
-    recognition.lang = 'fr-FR'
-    recognition.interimResults = false
-
-    recognition.onstart = () => setIsRecording(true)
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript
-      setInput(prev => prev ? prev + ' ' + transcript : transcript)
+    if (typeof window === 'undefined') return
+    // @ts-ignore
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert("Votre navigateur ou appareil mobile ne supporte pas la reconnaissance vocale native.")
+      return
     }
-    recognition.onerror = (e: any) => {
-      console.error(e)
+
+    try {
+      const recognition = new SpeechRecognition()
+      recognitionRef.current = recognition
+      recognition.lang = 'fr-FR'
+      recognition.interimResults = false
+
+      recognition.onstart = () => setIsRecording(true)
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript
+        setInput(prev => prev ? prev + ' ' + transcript : transcript)
+      }
+      recognition.onerror = (e: any) => {
+        console.error("Speech recognition error:", e)
+        setIsRecording(false)
+      }
+      recognition.onend = () => setIsRecording(false)
+
+      recognition.start()
+    } catch (err) {
+      console.error("Failed to start speech recognition:", err)
       setIsRecording(false)
+      alert("Impossible de démarrer le micro. Vérifiez les permissions de votre navigateur.")
     }
-    recognition.onend = () => setIsRecording(false)
-
-    recognition.start()
   }
 
   useEffect(() => {
@@ -104,22 +121,27 @@ export function AiAssistant() {
     }
   }
 
-  const handleTts = async (text: string) => {
-    try {
-      const res = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      })
-      if (!res.ok) throw new Error('Erreur TTS')
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const audio = new Audio(url)
-      audio.play()
-      audio.onended = () => URL.revokeObjectURL(url)
-    } catch {
-      // Silently fail
+  const handleTts = (text: string) => {
+    if (typeof window === 'undefined') return
+    if (!('speechSynthesis' in window)) {
+      alert("Votre navigateur ne supporte pas la synthèse vocale.")
+      return
     }
+    
+    // Stop any ongoing speech
+    window.speechSynthesis.cancel()
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    // Try to find a French or Malagasy voice (fr-FR is often a good fallback for Malagasy if mg-MG isn't available)
+    const voices = window.speechSynthesis.getVoices()
+    const voice = voices.find(v => v.lang.includes('mg')) || voices.find(v => v.lang.includes('fr'))
+    if (voice) {
+      utterance.voice = voice
+    }
+    utterance.lang = 'fr-FR' // Fallback accent
+    utterance.rate = 0.9 // Slightly slower for better comprehension
+    
+    window.speechSynthesis.speak(utterance)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -252,7 +274,7 @@ export function AiAssistant() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={startRecording}
+                  onClick={toggleRecording}
                   className={`h-9 w-9 rounded-xl transition-colors ${
                     isRecording 
                       ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30 hover:text-red-300' 

@@ -23,29 +23,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const ZAI = (await import('z-ai-web-dev-sdk')).default
-    const zai = await ZAI.create()
+    const lastMessage = messages[messages.length - 1].content.toLowerCase()
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...messages.map((m: { role: string; content: string }) => ({
-          role: m.role as 'user' | 'assistant',
-          content: m.content,
-        })),
-      ],
-      thinking: { type: 'disabled' },
-    })
+    // Simulate AI thinking time
+    await new Promise(resolve => setTimeout(resolve, 1500))
 
-    const response =
-      completion.choices?.[0]?.message?.content ??
-      'Miala tsiny, tsy nahazo nomena valiny azafady. Andramo indray.'
+    let response = "Miarahaba! Izaho dia AgriAssist, mpanampy anao amin'ny fambolena. Inona no azoko hanampiana anao anio?"
+
+    if (lastMessage.includes("vary") || lastMessage.includes("aretina mety mahazo ny vary")) {
+      response = "Ny vary dia matetika mety ho voan'ny aretina 'Piriculariose' (vokatry ny holatra) na ny 'Mildiou'. Ny tsara indrindra dia ny fampiasana masomboly voafantina tsara, ny fitantanana ny rano anaty tanimbary, ary ny fanasarahana ny fambolena. Azo ampiasaina ihany koa ny zezika voajanahary mba hanatanjahana ny taho."
+    } else if (lastMessage.includes("voly tsara") || lastMessage.includes("vanim-potoana")) {
+      response = "Amin'izao vanim-potoana ririnina na maintany izao, ny voly tsara atao dia ny tsaramaso, ny ovy, ary ny anana samihafa (legioma). Raha any amin'ny faritra misy rano kosa dia tsara ny manohy ny voly avotra na manomana ny ketsa ho an'ny vary asara."
+    } else if (lastMessage.includes("voanjo")) {
+      response = "Mba hitsaboana ny aretin'ny voanjo (toy ny fahalovàn'ny faka na ny aretin-dravina), mila miala amin'ny fambolena voanjo eo amin'ilay tany mitovy in-droa miantoana (rotation des cultures). Fafazo lavenona kely ny tany alohan'ny hambolena mba hamonoana ny bakteria ratsy."
+    } else if (lastMessage.includes("orana") || lastMessage.includes("toetrandro")) {
+      response = "Arakaraka ny toerana misy anao eto Madagasikara izany. Fa amin'ny ankapobeny, tsara hatrany ny manaraka ny toetrandro isam-paritra eto amin'ny AgriSense alohan'ny hanombohana ny famafazana."
+    } else if (messages.length > 1) {
+      response = "Aza misalasala manontany ahy raha mila fanazavana fanampiny momba ny fambolena, ny fitsaboana zavamaniry na ny toetrandro ianao. Eto aho hanampy ny tantsaha Malagasy!"
+    }
 
     return NextResponse.json({ response })
   } catch (error) {
     console.error('[Chat API] Error:', error)
     return NextResponse.json(
-      { response: 'Miala tsiny, nisy olana tamin\'ny server. Andramo indray mety ho lasa.' },
+      { response: 'Miala tsiny, nisy olana tamin\'ny fifandraisana. Azafady, andramo indray.' },
       { status: 200 }
     )
   }

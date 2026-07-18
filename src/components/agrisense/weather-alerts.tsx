@@ -26,7 +26,9 @@ const typeIcons: Record<string, FC<{ className?: string }>> = {
   rain: CloudRain,
 }
 
-export function WeatherAlerts() {
+export function WeatherAlerts({ alerts }: { alerts?: any[] }) {
+  const displayAlerts = alerts && alerts.length > 0 ? alerts : weatherAlerts
+
   return (
     <div className="relative overflow-hidden rounded-xl bg-black/40 backdrop-blur-xl shadow-xl p-6 sm:p-8 h-full flex flex-col text-white">
       <div className="flex items-center gap-4 mb-8">
@@ -40,7 +42,7 @@ export function WeatherAlerts() {
       </div>
       <ScrollArea className="flex-1 -mx-2 px-2">
         <div className="flex flex-col gap-4">
-          {weatherAlerts.map((alert, i) => {
+          {displayAlerts.map((alert, i) => {
             const Icon = typeIcons[alert.type] ?? CloudRain
             const sev = severityConfig[alert.severity]
             return (
