@@ -8,7 +8,8 @@ import {
   CalendarDays,
   MoreHorizontal,
   Home as HomeIcon,
-  CloudSun
+  CloudSun,
+  Store
 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Header } from '@/components/agrisense/header'
@@ -18,16 +19,22 @@ import { AiAssistant } from '@/components/agrisense/ai-assistant'
 import { SmsNotifications } from '@/components/agrisense/sms-notifications'
 import { KajyTab } from '@/components/agrisense/kajy-tab'
 import { TetiandroTab } from '@/components/agrisense/tetiandro-tab'
+import { TsenaTab } from '@/components/agrisense/tsena-tab'
 import { SplashScreen } from '@/components/agrisense/splash-screen'
 import { DeveloperInfo } from '@/components/agrisense/developer-info'
-import { WeatherBackground } from '@/components/agrisense/toetrandro-tab'
+import dynamic from 'next/dynamic'
 import { useBgStore } from '@/lib/bg-store'
+
+const WeatherBackground = dynamic(() => import('@/components/agrisense/toetrandro-tab').then(mod => mod.WeatherBackground), {
+  ssr: false
+})
 
 const tabs = [
   { value: 'home', label: 'Fandraisana', icon: HomeIcon },
   { value: 'sahako', label: 'Sahako', icon: Sprout },
   { value: 'tetiandro', label: 'Tetiandro', icon: CalendarDays },
   { value: 'kajy', label: 'Kajy', icon: Calculator },
+  { value: 'tsena', label: 'Tsena', icon: Store },
   { value: 'hafa', label: 'Hafa', icon: MoreHorizontal },
 ] as const
 
@@ -147,6 +154,7 @@ export default function Home() {
                     {activeTab === 'sahako' && <SahakoTab />}
                     {activeTab === 'tetiandro' && <TetiandroTab />}
                     {activeTab === 'kajy' && <KajyTab />}
+                    {activeTab === 'tsena' && <TsenaTab />}
                     {activeTab === 'hafa' && (
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                         <div className="lg:col-span-2">
