@@ -496,7 +496,9 @@ export function ToetrandroTab() {
     return {
       day: dayName,
       icon: wmo.icon,
-      temp: `${Math.round(liveWeather.daily.temperature_2m_max[i])}°`
+      temp: `${Math.round(liveWeather.daily.temperature_2m_max[i])}°`,
+      minTemp: Math.round(liveWeather.daily.temperature_2m_min[i]),
+      maxTemp: Math.round(liveWeather.daily.temperature_2m_max[i])
     }
   }) : staticData.forecast
 
@@ -921,10 +923,13 @@ export function ToetrandroTab() {
                           <div key={idx} className={`flex flex-col items-center min-w-[70px] lg:min-w-[90px] transition-transform duration-700 ${heights[idx]} snap-center`}>
                               <div className="text-[10px] lg:text-[11px] tracking-widest uppercase font-medium text-white/50 mb-3 lg:mb-4">{fc.day}</div>
                               <div className="text-xl lg:text-2xl mb-4 lg:mb-5 opacity-80">{fc.icon}</div>
-                              <div className="w-2 h-2 lg:w-2.5 lg:h-2.5 rounded-full bg-white shadow-[0_0_15px_white] z-10 mb-4 lg:mb-6 relative">
+                              <div className="w-2 h-2 lg:w-2.5 lg:h-2.5 rounded-full bg-white shadow-[0_0_15px_white] z-10 mb-2 lg:mb-4 relative">
                                   <div className="absolute w-full h-full bg-white rounded-full animate-ping opacity-50"></div>
                               </div>
-                              <div className="text-2xl lg:text-3xl font-extralight text-white">{fc.temp}°</div>
+                              <div className="flex flex-col items-center">
+                                  <span className="text-xl lg:text-2xl font-light text-white">{fc.maxTemp ?? parseInt(fc.temp)}°</span>
+                                  <span className="text-[10px] lg:text-xs font-medium text-white/50">{fc.minTemp ?? parseInt(fc.temp) - 5}°</span>
+                              </div>
                           </div>
                       ))}
                   </div>
