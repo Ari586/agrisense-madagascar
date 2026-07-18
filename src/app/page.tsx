@@ -59,14 +59,6 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // Hide splash screen after 2.5 seconds
-    const timer = setTimeout(() => {
-      setShowSplash(false)
-    }, 2500)
-    return () => clearTimeout(timer)
-  }, [])
-
-  useEffect(() => {
     const handleTabChange = (e: Event) => {
       const customEvent = e as CustomEvent<string>
       setActiveTab(customEvent.detail)
@@ -87,7 +79,7 @@ export default function Home() {
       )}
       
       <AnimatePresence>
-        {showSplash && <SplashScreen />}
+        {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
       </AnimatePresence>
 
       {!showSplash && (
