@@ -22,6 +22,7 @@ import { TetiandroTab } from '@/components/agrisense/tetiandro-tab'
 import { TsenaTab } from '@/components/agrisense/tsena-tab'
 import { SplashScreen } from '@/components/agrisense/splash-screen'
 import { DeveloperInfo } from '@/components/agrisense/developer-info'
+import { VoiceAssistant } from '@/components/agrisense/voice-assistant'
 import dynamic from 'next/dynamic'
 import { useBgStore } from '@/lib/bg-store'
 
@@ -173,6 +174,10 @@ export default function Home() {
 
         </motion.div>
       )}
+      
+      {/* Global Floating AI Voice Assistant */}
+      {!showSplash && <VoiceAssistant />}
+      
       <DeveloperInfo />
     </div>
   )
