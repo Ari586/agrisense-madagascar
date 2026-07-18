@@ -21,13 +21,13 @@ interface WeatherData {
 // --- Helpers ---
 
 const REGIONS = [
-  "Antananarivo",
-  "Toamasina",
-  "Antsirabe",
-  "Mahajanga",
-  "Fianarantsoa",
-  "Toliara",
-  "Antsiranana",
+  "Analamanga",
+  "Vakinankaratra",
+  "Atsinanana",
+  "Boeny",
+  "Matsiatra Ambony",
+  "Atsimo-Andrefana",
+  "DIANA",
 ] as const;
 
 const CONDITIONS = [

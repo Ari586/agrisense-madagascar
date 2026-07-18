@@ -60,6 +60,10 @@ export function MarketPrices() {
   const [prices, setPrices] = useState<CropPrice[]>([])
   const [lastUpdate, setLastUpdate] = useState<string>('')
   const [loading, setLoading] = useState(true)
+  
+  // Profit Calculator State
+  const [calcCrop, setCalcCrop] = useState<string>('Riz (Vary)')
+  const [calcSurface, setCalcSurface] = useState<number>(1000)
 
   const fetchPrices = async () => {
     try {
@@ -92,6 +96,23 @@ export function MarketPrices() {
       rawPrice: p.price,
     }
   })
+
+  // Profit Calculator Logic
+  const selectedCropObj = prices.find((p) => p.crop === calcCrop)
+  const currentPricePerKg = selectedCropObj?.price || 0
+  
+  // Base yields in kg/m2
+  const yieldPerM2: Record<string, number> = {
+    'Riz (Vary)': 0.5,
+    'Maïs': 0.4,
+    'Manioc': 2.0,
+    'Pois du cap': 0.3,
+    'Tomate': 1.5,
+  }
+  const estimatedYield = (yieldPerM2[calcCrop] || 0.5) * calcSurface
+  const grossRevenue = estimatedYield * currentPricePerKg
+  const estimatedCost = calcSurface * 250 // Base cost 250 Ar/m2
+  const netProfit = grossRevenue - estimatedCost
 
   if (loading) {
     return (
@@ -149,8 +170,8 @@ export function MarketPrices() {
                     border: '1px solid var(--border)',
                     backgroundColor: 'var(--card)',
                   }}
-                  formatter={(value: number, _name: string, props: { payload: { rawPrice: number; unit: string } }) => {
-                    return [`${props.payload.rawPrice.toLocaleString('fr-FR')} Ar`, 'Prix']
+                  formatter={(value: number, _name: string, props: any) => {
+                    return [`${props.payload?.rawPrice?.toLocaleString('fr-FR') || value} Ar`, 'Prix']
                   }}
                 />
                 <Bar dataKey="price" radius={[6, 6, 0, 0]}>
@@ -205,6 +226,52 @@ export function MarketPrices() {
               })}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      {/* Profit Calculator (Kajy Tombony) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <span className="text-2xl">💰</span>
+            Kajy Tombony (Simulateur de Revenus)
+          </CardTitle>
+          <CardDescription>
+            Estimez vos bénéfices nets en fonction de la culture et de la surface
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">🌾 Karazana Voly (Culture)</label>
+              <select value={calcCrop} onChange={(e) => setCalcCrop(e.target.value)} className="w-full p-2 rounded-md border bg-background text-sm">
+                {prices.map(p => (
+                  <option key={p.crop} value={p.crop}>{p.crop}</option>
+                ))}
+                {prices.length === 0 && <option value="Vary">Riz (Vary)</option>}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">📐 Velaran-tany (Surface m²)</label>
+              <input type="number" value={calcSurface} onChange={(e) => setCalcSurface(Number(e.target.value) || 0)} className="w-full p-2 rounded-md border bg-background text-sm" />
+            </div>
+          </div>
+          
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-xl border p-4 bg-muted/30">
+              <p className="text-xs text-muted-foreground mb-1">Coût estimé (Masomboly, Zezika)</p>
+              <p className="text-lg font-bold text-red-600 dark:text-red-400">- {estimatedCost.toLocaleString('fr-FR')} Ar</p>
+            </div>
+            <div className="rounded-xl border p-4 bg-muted/30">
+              <p className="text-xs text-muted-foreground mb-1">Revenu brut (Vidio tsena)</p>
+              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">+ {grossRevenue.toLocaleString('fr-FR')} Ar</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Basé sur {estimatedYield.toLocaleString('fr-FR')} kg</p>
+            </div>
+            <div className="rounded-xl border p-4 bg-primary/10 border-primary/20">
+              <p className="text-xs font-semibold text-primary mb-1">Tombony madio (Bénéfice Net)</p>
+              <p className="text-xl font-black text-primary">{netProfit > 0 ? '+' : ''}{netProfit.toLocaleString('fr-FR')} Ar</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </motion.div>

@@ -83,45 +83,31 @@ export const smsNotifications = [
 
 export const agronomicTips = [
   {
-    season: "Novembre - Décembre",
+    season: "Oktobra - Desambra (Ketsa)",
     crop: "Riz (Vary), Maïs",
     advice:
       "Début de la saison des pluies. Préparez les pépinières et semez le riz. Le maïs peut être semé directement.",
     icon: "sprout" as const,
   },
   {
-    season: "Janvier - Février",
-    crop: "Manioc, Patate douce",
+    season: "Desambra - Febroary",
+    crop: "Vary, Arachide",
     advice:
-      "Période de plantation du manioc et de la patate douce. Surveillez les ravageurs.",
+      "Période de transplantation (Fanetsana) et de sarclage. Surveillez les attaques de chenilles légionnaires.",
     icon: "sun" as const,
   },
   {
-    season: "Mars - Avril",
-    crop: "Riz (récolte), Légumineuses",
+    season: "Mars - Mey",
+    crop: "Haricot, Pomme de terre",
     advice:
-      "Récoltez le riz de contre-saison. Semez les pois du cap et haricots.",
-    icon: "wheat" as const,
-  },
-  {
-    season: "Mai - Juin",
-    crop: "Café, Vanille",
-    advice:
-      "Entretien des caféiers et vanilliers. Appliquez les engrais organiques.",
-    icon: "flower2" as const,
-  },
-  {
-    season: "Juillet - Août",
-    crop: "Tomates, Choux, Carottes",
-    advice:
-      "Saison fraîche idéale pour les légumes. Utilisez l'irrigation goutte-à-goutte.",
+      "Fin des pluies. Récolte principale (Jinja) du riz et préparation des cultures de contre-saison.",
     icon: "cloud-rain" as const,
   },
   {
-    season: "Septembre - Octobre",
-    crop: "Préparation des sols",
+    season: "Jona - Aogositra (Asara)",
+    crop: "Légumes d'hiver, Blé",
     advice:
-      "Préparez les rizières et les champs. Effectuez les analyses de sol.",
+      "Saison sèche et fraîche. Idéale pour les cultures maraîchères avec irrigation contrôlée.",
     icon: "shovel" as const,
   },
 ];

@@ -57,10 +57,10 @@ export function AgronomicAdvice() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
             <CalendarDays className="h-5 w-5 text-primary" />
-            Calendrier Agricole Saisonnier
+            Tetiandro Fambolena
           </CardTitle>
           <CardDescription>
-            Guide de plantation et récolte adapté au climat malgache
+            Torolàlana momba ny fambolena sy fijinjana ara-potoana
           </CardDescription>
         </CardHeader>
         <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
@@ -134,6 +134,47 @@ export function AgronomicAdvice() {
               >
                 <p className="font-semibold text-sm mb-1">{tip.title}</p>
                 <p className="text-sm text-muted-foreground leading-relaxed">{tip.text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Disease Gallery */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <span className="text-2xl">🦠</span>
+            Galerie des Maladies & Ravageurs
+          </CardTitle>
+          <CardDescription>
+            Identifier et traiter les problèmes courants à Madagascar
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { emoji: '🍂', name: 'Pyriculariose', crop: 'Riz', desc: 'Maladie fongique — taches brunes sur les feuilles et les panicules. Traitement au Mancozeb ou Tricyclazole.', prevention: 'Rotation des cultures, variétés résistantes' },
+              { emoji: '⚫', name: 'Charbon du maïs', crop: 'Maïs', desc: 'Tumeurs noires sur les épis et les tiges. Causé par le champignon Ustilago maydis.', prevention: 'Nettoyage du sol, élimination des résidus' },
+              { emoji: '🐛', name: 'Chenille légionnaire', crop: 'Maïs', desc: 'Chenille vorace qui dévore les cultures entières en quelques jours (Fall Armyworm).', prevention: 'Surveillance précoce, pesticide biologique (Bt)' },
+              { emoji: '🌫️', name: 'Mildiou', crop: 'Pomme de terre', desc: 'Oïdium — dépôt blanc poudreux sur les feuilles. Traitement au soufre.', prevention: 'Réduire l\'arrosage, espacement des plants' },
+            ].map((d, i) => (
+              <motion.div
+                key={d.name}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08, duration: 0.3 }}
+                className="rounded-xl border p-4 hover:shadow-sm transition-shadow flex gap-4"
+              >
+                <div className="text-4xl">{d.emoji}</div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="font-semibold text-sm text-rose-700 dark:text-rose-400">{d.name}</p>
+                    <Badge variant="secondary" className="text-[10px]">{d.crop}</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{d.desc}</p>
+                  <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">🛡️ {d.prevention}</p>
+                </div>
               </motion.div>
             ))}
           </div>

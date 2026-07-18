@@ -1,0 +1,13 @@
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.43.106:3000
+- Environments: .env
+✓ Ready in 233ms
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/arielhavana/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/arielhavana/Documents/exports_tech/workspace-a8233e25-39e7-4c91-9e77-35b8fdf6f213 (1)/package-lock.json
+
+

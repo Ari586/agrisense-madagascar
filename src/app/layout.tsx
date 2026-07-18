@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "AgriSense Madagascar — Plateforme IA pour l'Agriculture Intelligente",
+  title: "Fambolena eto Madagasikara",
   description:
     "Aide à la décision pour les petits producteurs malgaches : diagnostic des maladies par photo, alertes climatiques, recommandations d'irrigation et conseils agronomiques en malagasy.",
   keywords: [
@@ -29,8 +24,10 @@ export const metadata: Metadata = {
     "Smart Agriculture",
   ],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/assets/Minae.png",
+    apple: "/assets/Minae.png",
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -40,8 +37,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                  }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${inter.variable} font-sans antialiased bg-background text-foreground`}
       >
         <ThemeProvider
           attribute="class"

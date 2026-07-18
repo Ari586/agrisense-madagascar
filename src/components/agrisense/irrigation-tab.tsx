@@ -48,10 +48,10 @@ interface IrrigationAdvice {
 }
 
 const urgencyConfig = {
-  critical: { color: 'bg-red-500', label: 'Critique', badge: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800' },
-  high: { color: 'bg-amber-500', label: 'Urgent', badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
-  medium: { color: 'bg-yellow-500', label: 'Modéré', badge: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800' },
-  low: { color: 'bg-emerald-500', label: 'Faible', badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
+  critical: { color: 'bg-red-500', label: 'Tena Loza', badge: 'bg-red-500/20 text-red-300 border-red-500/30' },
+  high: { color: 'bg-amber-500', label: 'Maika', badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+  medium: { color: 'bg-yellow-500', label: 'Antonony', badge: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' },
+  low: { color: 'bg-emerald-500', label: 'Azo ekena', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
 } as const
 
 function generateIrrigationAdvice(data: SensorReading): IrrigationAdvice[] {
@@ -59,86 +59,86 @@ function generateIrrigationAdvice(data: SensorReading): IrrigationAdvice[] {
 
   if (data.soilMoisture < 25) {
     advice.push({
-      action: 'Arrosage immédiat requis',
+      action: 'Mila rano avy hatrany',
       urgency: 'critical',
-      reason: `L'humidité du sol est à ${data.soilMoisture}% — bien en dessous du seuil critique de 25%. Les racines de vos cultures risquent de se dessécher.`,
-      amount: '15-20 litres/m²',
-      timing: 'Immédiatement, puis toutes les 6 heures',
+      reason: `Ambany loatra ny hamandoana (${data.soilMoisture}%). Ahiana ho maina ny fakan'ny voly.`,
+      amount: '15-20 litatra/m²',
+      timing: 'Avy hatrany, ary isaky ny 6 ora',
     })
   } else if (data.soilMoisture < 40) {
     advice.push({
-      action: 'Planifier un arrosage',
+      action: 'Omano ny fanondrahana',
       urgency: 'high',
-      reason: `L'humidité du sol est à ${data.soilMoisture}%. Approchez du seuil minimal recommandé de 35% pour les cultures de riz.`,
-      amount: '10-15 litres/m²',
-      timing: "Dans les 4 à 6 heures, de préférence tôt le matin",
+      reason: `Midina ny hamandoana (${data.soilMoisture}%). Manakaiky ny fetra tokony ho izy (35%).`,
+      amount: '10-15 litatra/m²',
+      timing: "Ato anatin'ny 4 na 6 ora, tsara indrindra rehefa maraina",
     })
   } else if (data.soilMoisture < 55) {
     advice.push({
-      action: 'Surveillance normale',
+      action: 'Fanaraha-maso tsotra',
       urgency: 'low',
-      reason: `L'humidité du sol est à ${data.soilMoisture}% — dans la plage optimale pour la plupart des cultures.`,
-      amount: '5-8 litres/m² si nécessaire',
-      timing: 'Vérifiez dans 12 heures',
+      reason: `Tsara ny hamandoana (${data.soilMoisture}%) ho an'ny ankamaroan'ny voly.`,
+      amount: '5-8 litatra/m² raha ilaina',
+      timing: 'Zahao indray afaka 12 ora',
     })
   } else {
     advice.push({
-      action: 'Réduire l\'arrosage',
+      action: 'Ahenao ny rano',
       urgency: 'low',
-      reason: `L'humidité du sol est élevée (${data.soilMoisture}%). Un excès d'eau peut provoquer des maladies fongiques.`,
+      reason: `Be loatra ny rano (${data.soilMoisture}%). Mety hiteraka aretina amin'ny faka izany.`,
     })
   }
 
   if (data.temperature > 35) {
     advice.push({
-      action: 'Protection contre la chaleur',
+      action: 'Fiarovana amin\'ny hafanana',
       urgency: 'high',
-      reason: `Température élevée de ${data.temperature}°C. Évitez l'arrosage en pleine journée (évaporation rapide). Privilégiez l'arrosage tôt le matin ou en fin d'après-midi.`,
-      timing: 'Arrosage recommandé: 5h-7h ou 17h-19h',
+      reason: `Mafana be ny andro (${data.temperature}°C). Aza manondraka rano amin'ny antoandro be.`,
+      timing: 'Soso-kevitra: 5h-7h na 17h-19h',
     })
   } else if (data.temperature < 15) {
     advice.push({
-      action: 'Attention au froid',
+      action: 'Ahemory ny fanondrahana',
       urgency: 'medium',
-      reason: `Température basse de ${data.temperature}°C. Réduisez les apports d'eau car l'évaporation est minimale.`,
+      reason: `Mangatsiaka ny andro (${data.temperature}°C). Mety hiteraka fihomboan'ny holatra ny fanondrahana izao.`,
     })
   }
 
   if (data.humidity < 40) {
     advice.push({
-      action: 'Humidité de l\'air très basse',
+      action: 'Maina loatra ny rivotra',
       urgency: 'medium',
-      reason: `L'humidité de l'air est à ${data.humidity}%. L'évaporation du sol sera accélérée. Augmentez la fréquence d'arrosage de 20%.`,
+      reason: `Ny hamandoan'ny rivotra dia ${data.humidity}%. Hafainganin'izany ny etona amin'ny tany. Ampitomboy 20% ny fanondrahana.`,
     })
   } else if (data.humidity > 85) {
     advice.push({
-      action: 'Risque de maladie fongique',
+      action: 'Atahorana hisy holatra',
       urgency: 'medium',
-      reason: `L'humidité de l'air est très élevée (${data.humidity}%). Réduisez l'arrosage et assurez une bonne circulation de l'air entre les plants.`,
+      reason: `Avo loatra ny hamandoan'ny rivotra (${data.humidity}%). Ahena ny fanondrahana ary avelao hihetsika ny rivotra eo amin'ny voly.`,
     })
   }
 
   if (data.windSpeed > 25) {
     advice.push({
-      action: 'Vent fort — protéger les cultures',
+      action: 'Rivotra mahery — arovy ny voly',
       urgency: 'high',
-      reason: `Vent à ${data.windSpeed} km/h. L'évaporation est fortement accélérée. Utilisez le paillage (fameno) pour retenir l'humidité du sol.`,
+      reason: `Rivotra ${data.windSpeed} km/h. Mampietona haingana ny rano. Asio molch (fameno) hitazomana ny hamandoana.`,
     })
   }
 
   if (data.rainfall > 5) {
     advice.push({
-      action: 'Pluie récente — pas besoin d\'arroser',
+      action: 'Ajanony ny fanondrahana',
       urgency: 'low',
-      reason: `${data.rainfall} mm de pluie enregistrés. Le sol est naturellement alimenté. Vérifiez l'humidité dans 6 heures.`,
+      reason: `Misy rotsak'orana vao haingana (${data.rainfall}mm). Tsy mila rano ny voly aloha.`,
     })
   }
 
   if (data.lightLevel > 90) {
     advice.push({
-      action: 'Ensoleillement intense',
+      action: 'Masoandro mirehitra',
       urgency: 'medium',
-      reason: `Lumière à ${data.lightLevel}%. L'évapotranspiration est maximale. Assurez un apport d'eau suffisant aux jeunes plants.`,
+      reason: `Hazavana ${data.lightLevel}%. Ambony ny etona. Ataovy azo antoka fa mahazo rano tsara ny voly tanora.`,
     })
   }
 
@@ -174,6 +174,7 @@ export function IrrigationTab() {
   const [historicalData, setHistoricalData] = useState(generateHistoricalData)
   const [advice, setAdvice] = useState<IrrigationAdvice[]>([])
   const [loading, setLoading] = useState(true)
+  const [isIrrigating, setIsIrrigating] = useState(false)
 
   const fetchSensors = async () => {
     try {
@@ -185,10 +186,14 @@ export function IrrigationTab() {
         setHistoricalData(generateHistoricalData())
       }
     } catch {
-      // Keep existing data on error
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleManualIrrigation = () => {
+    setIsIrrigating(true)
+    setTimeout(() => setIsIrrigating(false), 2000)
   }
 
   useEffect(() => {
@@ -197,64 +202,17 @@ export function IrrigationTab() {
     return () => clearInterval(interval)
   }, [])
 
-  const sensors = sensorData ? [
-    {
-      label: 'Humidité du Sol',
-      value: sensorData.soilMoisture,
-      unit: '%',
-      icon: Droplets,
-      color: sensorData.soilMoisture < 25 ? 'text-red-500' : sensorData.soilMoisture < 40 ? 'text-amber-500' : 'text-emerald-500',
-      barColor: sensorData.soilMoisture < 25 ? 'data-[slot=progress-indicator]:bg-red-500' : sensorData.soilMoisture < 40 ? 'data-[slot=progress-indicator]:bg-amber-500' : 'data-[slot=progress-indicator]:bg-emerald-500',
-      max: 100,
-    },
-    {
-      label: 'Température',
-      value: sensorData.temperature,
-      unit: '°C',
-      icon: Thermometer,
-      color: sensorData.temperature > 35 ? 'text-red-500' : sensorData.temperature > 28 ? 'text-amber-500' : 'text-emerald-500',
-      barColor: sensorData.temperature > 35 ? 'data-[slot=progress-indicator]:bg-red-500' : sensorData.temperature > 28 ? 'data-[slot=progress-indicator]:bg-amber-500' : 'data-[slot=progress-indicator]:bg-emerald-500',
-      max: 50,
-    },
-    {
-      label: 'Humidité de l\'Air',
-      value: sensorData.humidity,
-      unit: '%',
-      icon: CloudRain,
-      color: 'text-sky-500',
-      barColor: 'data-[slot=progress-indicator]:bg-sky-500',
-      max: 100,
-    },
-    {
-      label: 'Vent',
-      value: sensorData.windSpeed,
-      unit: 'km/h',
-      icon: Wind,
-      color: sensorData.windSpeed > 25 ? 'text-red-500' : 'text-teal-500',
-      barColor: sensorData.windSpeed > 25 ? 'data-[slot=progress-indicator]:bg-red-500' : 'data-[slot=progress-indicator]:bg-teal-500',
-      max: 60,
-    },
-    {
-      label: 'Pluviométrie',
-      value: sensorData.rainfall,
-      unit: 'mm',
-      icon: CloudSun,
-      color: 'text-primary',
-      barColor: 'data-[slot=progress-indicator]:bg-primary',
-      max: 50,
-    },
-    {
-      label: 'Lumière',
-      value: sensorData.lightLevel,
-      unit: '%',
-      icon: Sun,
-      color: 'text-yellow-500',
-      barColor: 'data-[slot=progress-indicator]:bg-yellow-500',
-      max: 100,
-    },
-  ] : []
+  const latestData = sensorData || { soilMoisture: 0, temperature: 0, humidity: 0, lightLevel: 0, windSpeed: 0, rainfall: 0 }
+  const status = advice.length > 0 ? advice[0].urgency : 'low'
 
-  const criticalCount = advice.filter(a => a.urgency === 'critical' || a.urgency === 'high').length
+  const sensors = sensorData ? [
+    { label: 'Hamandoan\'ny Tany', value: sensorData.soilMoisture, unit: '%', icon: Droplets, color: 'text-emerald-500', barColor: 'data-[slot=progress-indicator]:bg-emerald-500', max: 100 },
+    { label: 'Haizana', value: sensorData.temperature, unit: '°C', icon: Thermometer, color: 'text-orange-500', barColor: 'data-[slot=progress-indicator]:bg-orange-500', max: 50 },
+    { label: 'Hamandoan\'ny Rivotra', value: sensorData.humidity, unit: '%', icon: CloudRain, color: 'text-sky-500', barColor: 'data-[slot=progress-indicator]:bg-sky-500', max: 100 },
+    { label: 'Rivotra', value: sensorData.windSpeed, unit: 'km/h', icon: Wind, color: 'text-teal-500', barColor: 'data-[slot=progress-indicator]:bg-teal-500', max: 60 },
+    { label: 'Rotsak\'orana', value: sensorData.rainfall, unit: 'mm', icon: CloudSun, color: 'text-blue-500', barColor: 'data-[slot=progress-indicator]:bg-blue-500', max: 50 },
+    { label: 'Hazavana', value: sensorData.lightLevel, unit: '%', icon: Sun, color: 'text-yellow-500', barColor: 'data-[slot=progress-indicator]:bg-yellow-500', max: 100 },
+  ] : []
 
   if (loading) {
     return (
@@ -265,199 +223,123 @@ export function IrrigationTab() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="flex flex-col gap-6"
-    >
-      {/* Status banner */}
-      {criticalCount > 0 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="rounded-xl border border-red-200 bg-red-50 p-4 flex items-start gap-3 dark:border-red-800 dark:bg-red-900/20"
+    <div className="flex flex-col h-full bg-black/40 backdrop-blur-xl rounded-xl shadow-xl text-white">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-lg bg-blue-500/20 text-blue-400">
+              <Droplets className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold text-white">Fikarakarana Rano</CardTitle>
+              <CardDescription className="text-white/70">Tari-dalana manokana</CardDescription>
+            </div>
+          </div>
+          <Badge variant="outline" className={`gap-1.5 rounded-full px-3 py-1 text-sm font-medium border-white/20 ${
+            status === 'critical' ? 'bg-red-500/20 text-red-300' :
+            status === 'high' ? 'bg-amber-500/20 text-amber-300' :
+            status === 'medium' ? 'bg-yellow-500/20 text-yellow-300' :
+            'bg-emerald-500/20 text-emerald-300'
+          }`}>
+            <span className="relative flex h-2 w-2">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${urgencyConfig[status].color}`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${urgencyConfig[status].color}`}></span>
+            </span>
+            {urgencyConfig[status].label}
+          </Badge>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="flex-1 flex flex-col gap-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-2">
+            <span className="text-sm font-medium text-white/70">Hamandoan'ny Tany</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-white">{latestData.soilMoisture}%</span>
+              <span className="text-sm text-emerald-400">Tsara</span>
+            </div>
+            <Progress value={latestData.soilMoisture} className="h-1.5 mt-2 bg-white/10" />
+          </div>
+          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-2">
+            <span className="text-sm font-medium text-white/70">Rano Ilaina</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-white">
+                {status === 'critical' ? '15L' : status === 'high' ? '10L' : '0L'}
+              </span>
+              <span className="text-sm text-white/50">/m²</span>
+            </div>
+            <div className="text-sm font-medium mt-2 text-blue-400">
+              {status === 'low' ? 'Tsy mila' : 'Ilaina anio'}
+            </div>
+          </div>
+        </div>
+
+        <Button 
+          size="lg" 
+          className={`w-full text-base font-semibold shadow-lg ${
+            status === 'critical' || status === 'high' 
+              ? 'bg-blue-600 hover:bg-blue-700 text-white animate-pulse' 
+              : 'bg-white/10 hover:bg-white/20 text-white'
+          }`}
+          onClick={handleManualIrrigation}
+          disabled={isIrrigating || status === 'low'}
         >
-          <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold text-red-700 dark:text-red-400">
-              {criticalCount} recommandation{criticalCount > 1 ? 's' : ''} urgente{criticalCount > 1 ? 's' : ''}
-            </p>
-            <p className="text-sm text-red-600 dark:text-red-400/80 mt-0.5">
-              Action immédiate requise pour protéger vos cultures.
-            </p>
-          </div>
-        </motion.div>
-      )}
+          {isIrrigating ? (
+            <>
+              <RefreshCw className="mr-2 h-5 w-5 animate-spin" />
+              Manondraka...
+            </>
+          ) : (
+            <>
+              <Droplets className="mr-2 h-5 w-5" />
+              Omeo Rano ({status === 'low' ? 'Tsy Ilaina' : 'Mandeha'})
+            </>
+          )}
+        </Button>
 
-      {/* IoT Sensors Grid */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Gauge className="h-5 w-5 text-primary" />
-              Capteurs IoT en Temps Réel
-            </CardTitle>
-            <CardDescription className="mt-1">
-              Données mises à jour toutes les 30 secondes
-            </CardDescription>
-          </div>
-          <Button variant="outline" size="sm" onClick={fetchSensors} className="gap-1.5">
-            <RefreshCw className="h-3.5 w-3.5" />
-            Actualiser
-          </Button>
-        </CardHeader>
-        <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          >
-            {sensors.map((s) => (
-              <motion.div key={s.label} variants={item} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <s.icon className={`h-4 w-4 ${s.color}`} />
-                    <span className="text-sm font-medium">{s.label}</span>
+        <div className="pt-4">
+          <h4 className="text-sm font-semibold text-white/80 uppercase tracking-wider">Tari-dalana feno</h4>
+          <div className="space-y-3 mt-4">
+            {advice.map((item, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className={`p-4 rounded-lg bg-white/5 relative overflow-hidden`}
+              >
+                <div className={`absolute top-0 left-0 w-1 h-full ${urgencyConfig[item.urgency].color}`} />
+                <div className="pl-3">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="font-semibold text-white">{item.action}</span>
+                    <Badge variant="outline" className={urgencyConfig[item.urgency].badge}>
+                      {urgencyConfig[item.urgency].label}
+                    </Badge>
                   </div>
-                  <span className="text-sm font-bold tabular-nums">
-                    {s.value}{s.unit}
-                  </span>
-                </div>
-                <Progress
-                  value={(s.value / s.max) * 100}
-                  className={`h-2.5 ${s.barColor}`}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </CardContent>
-      </Card>
-
-      {/* Historical Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <Droplets className="h-5 w-5 text-primary" />
-            Évolution de l&apos;Humidité du Sol (12h)
-          </CardTitle>
-          <CardDescription>
-            Suivi en temps réel de l&apos;humidité et des précipitations
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
-          <div className="h-[240px] sm:h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={historicalData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="moistureGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(0.65 0.17 145)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="oklch(0.65 0.17 145)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="rainGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(0.6 0.12 200)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="oklch(0.6 0.12 200)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="time" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: '8px',
-                    border: '1px solid var(--border)',
-                    backgroundColor: 'var(--card)',
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="soilMoisture"
-                  stroke="oklch(0.65 0.17 145)"
-                  fill="url(#moistureGrad)"
-                  strokeWidth={2}
-                  name="Humidité sol (%)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="rainfall"
-                  stroke="oklch(0.6 0.12 200)"
-                  fill="url(#rainGrad)"
-                  strokeWidth={2}
-                  name="Pluie (mm)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Irrigation Recommendations */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <Droplets className="h-5 w-5 text-primary" />
-            Recommandations d&apos;Irrigation IA
-          </CardTitle>
-          <CardDescription>
-            Conseils personnalisés basés sur les données de vos capteurs
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="flex flex-col gap-3"
-          >
-            {advice.map((a, i) => {
-              const config = urgencyConfig[a.urgency]
-              return (
-                <motion.div
-                  key={i}
-                  variants={item}
-                  className="rounded-xl border p-4 sm:p-5 hover:shadow-sm transition-shadow"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${config.color}/10`}>
-                      {a.urgency === 'critical' || a.urgency === 'high' ? (
-                        <AlertTriangle className={`h-4 w-4 ${config.color.replace('bg-', 'text-')}`} />
-                      ) : (
-                        <CheckCircle2 className={`h-4 w-4 ${config.color.replace('bg-', 'text-')}`} />
+                  <p className="text-sm text-white/70 leading-relaxed mb-3">{item.reason}</p>
+                  
+                  {(item.amount || item.timing) && (
+                    <div className="flex flex-wrap gap-4 mt-2 pt-3 border-t border-white/10 text-xs font-medium text-white/60">
+                      {item.amount && (
+                        <div className="flex items-center gap-1.5">
+                          <Droplets className="h-3.5 w-3.5" />
+                          {item.amount}
+                        </div>
                       )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                        <span className="font-semibold text-sm">{a.action}</span>
-                        <Badge variant="outline" className={config.badge}>
-                          {config.label}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{a.reason}</p>
-                      {(a.amount || a.timing) && (
-                        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                          {a.amount && (
-                            <span className="flex items-center gap-1">
-                              <Droplets className="h-3 w-3" />
-                              {a.amount}
-                            </span>
-                          )}
-                          {a.timing && (
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {a.timing}
-                            </span>
-                          )}
+                      {item.timing && (
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="h-3.5 w-3.5" />
+                          {item.timing}
                         </div>
                       )}
                     </div>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </motion.div>
-        </CardContent>
-      </Card>
-    </motion.div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </div>
   )
 }

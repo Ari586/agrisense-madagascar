@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
     const zai = await ZAI.create()
 
     const response = await zai.chat.completions.createVision({
+      model: 'default',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         {
@@ -94,8 +95,8 @@ export async function POST(request: NextRequest) {
           ],
         },
       ],
-      thinking: { type: 'disabled' },
-    })
+      thinking: { type: 'disabled' } as any,
+    } as any)
 
     const rawContent = response.choices?.[0]?.message?.content
     if (!rawContent) {
