@@ -72,16 +72,17 @@ export function Header() {
             <img src="/Minae.png" alt="MINAE Logo" className="h-full w-auto object-contain rounded-sm" />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Search Input Button */}
             <div className="relative flex items-center">
               <Button
                 variant="outline"
-                className="w-[140px] sm:w-[220px] justify-start text-xs sm:text-sm text-muted-foreground bg-muted/50 border-dashed"
+                size="sm"
+                className="w-9 px-0 sm:w-[220px] sm:px-4 flex justify-center sm:justify-start text-xs sm:text-sm text-muted-foreground bg-muted/50 border-dashed"
                 onClick={() => setOpen(true)}
               >
-                <Search className="mr-2 h-4 w-4 shrink-0" />
-                <span className="truncate">Hikaroka eto...</span>
+                <Search className="h-4 w-4 shrink-0 sm:mr-2" />
+                <span className="hidden sm:inline truncate">Hikaroka eto...</span>
                 <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
                   <span className="text-xs">⌘</span>K
                 </kbd>
