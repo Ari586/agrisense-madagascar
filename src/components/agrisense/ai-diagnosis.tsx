@@ -14,6 +14,7 @@ import {
   Bug,
   Leaf,
   Shield,
+  Bot
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
