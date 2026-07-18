@@ -71,6 +71,7 @@ float fbm(vec3 p, int octaves, bool billowy){
     if (billowy) {
       n = n * 2.0 - 1.0;
       n = 1.0 - abs(n);
+      n = pow(n, 1.5); // Sharpen the clouds to break them up
     }
     total += n * amp;
     maxAmp += amp;
@@ -90,7 +91,7 @@ void main(){
   uv.x *= uAspect;
 
   float t = uTime * uSpeed * 0.05;
-  vec3 p = vec3(uv.x*2.0, uv.y*2.0, 0.0); // Scale up for smaller clouds
+  vec3 p = vec3(uv.x*2.0, uv.y*2.0, 0.0);
 
   // Base warping
   vec2 warp = vec2(
@@ -108,31 +109,29 @@ void main(){
   float baseCut = mix(1.0, 1.0 - smoothstepc(uBaseline-0.05, uBaseline+0.15, vf), uFlatBase);
 
   // Cloud coverage threshold
-  float lo = uDensity - uSoftness, hi = uDensity + uSoftness;
+  // We offset lo and hi to ensure clouds are scattered and not a solid block
+  float lo = uDensity + 0.15;
+  float hi = uDensity + uSoftness + 0.25;
   float a = smoothstepc(lo, hi, n) * baseCut;
 
   // Directional lighting
-  // Sample towards the light source for shadow
   vec3 lightOffset = vec3(uLightDir.x, uLightDir.y, 0.0) * 0.05;
   float nLight = fbm(wp - lightOffset, 5, true);
   
-  // If the noise towards the light is denser, this pixel is in shadow
   float shade = clamp((n - nLight) * uLightStrength * 4.0 + 0.6, 0.0, 1.0);
-  
-  // Add a fake ambient occlusion based on density (denser = darker core)
   float ao = clamp(1.0 - (n - lo) * 1.5, 0.3, 1.0);
   
   vec3 cloudCol = uCloudColor * shade * ao;
-  // Increase brightness on lit areas
   cloudCol = mix(cloudCol, uCloudColor * 1.5, clamp(shade - 0.7, 0.0, 1.0));
 
   // High altitude cirrus clouds (standard fbm)
   vec3 hp = vec3(uv.x*uHiStretch*0.5 + t*1.2, uv.y*3.0, t*0.3);
   float hn = fbm(hp, 4, false);
-  float ha = smoothstepc(uHiCoverage-0.2, uHiCoverage+0.2, hn) * uHiMax;
+  float ha = smoothstepc(uHiCoverage-0.1, uHiCoverage+0.2, hn) * uHiMax;
 
-  float cloudAlpha = clamp(a * uMaxAlpha, 0.0, 1.0);
-  float hiAlpha = clamp(ha, 0.0, 1.0);
+  // STRICT MAXIMUM ALPHA so it never fully blocks the view
+  float cloudAlpha = clamp(a * uMaxAlpha, 0.0, 0.75);
+  float hiAlpha = clamp(ha, 0.0, 0.5);
   
   float totalAlpha = max(cloudAlpha, hiAlpha);
   vec3 finalColor = mix(cloudCol, uHiColor, hiAlpha / (totalAlpha + 0.0001));
