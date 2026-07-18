@@ -765,12 +765,12 @@ export function ToetrandroTab() {
         }
       `}} />
 
-      <div className="relative w-full min-h-[750px] lg:h-[800px] flex flex-col">
+      <div className="relative w-full lg:h-[800px] flex flex-col">
         {/* Conteneur Principal */}
         <div className="font-sans text-white antialiased w-full h-full flex flex-col lg:flex-row gap-6 lg:gap-10 relative z-10 overflow-visible">
           
           {/* Panneau Latéral (Carte et Alertes) */}
-          <aside className="w-full lg:w-[420px] h-full flex-shrink-0 flex flex-col gap-4 sm:gap-6 relative z-20">
+          <aside className="w-full lg:w-[420px] lg:h-full flex-shrink-0 flex flex-col gap-4 sm:gap-6 relative z-20">
               
               <div className="glass-panel-toetrandro rounded-[2rem] p-6 text-center relative overflow-hidden">
                   <h1 className="text-2xl font-extralight tracking-widest mb-1 text-white">TOETRANDRO</h1>
@@ -788,7 +788,7 @@ export function ToetrandroTab() {
               </div>
           </aside>
 
-          <main className="flex-1 w-full min-w-0 h-full flex flex-col justify-between py-2 lg:py-6 relative z-10">
+          <main className="flex-1 w-full min-w-0 lg:h-full flex flex-col justify-start lg:justify-between py-2 lg:py-6 relative z-10 gap-8 lg:gap-0">
               <header className="flex justify-between items-start">
                   <div className="flex items-center gap-3">
                       <span className="text-white/60"><MapPin className="w-5 h-5" /></span>
