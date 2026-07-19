@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import twilio from 'twilio';
 
 // Base de données simulée en mémoire (À remplacer par Supabase, Firebase ou PostgreSQL en production)
 let latestSensorData = {
@@ -28,12 +29,30 @@ export async function POST(request: Request) {
       if (data.soilMoisture < 30) {
         alertMessage = `Fampitandremana: Maina loatra ny tany (${data.soilMoisture}%). Mila tondrahana haingana ny voly.`;
         
-        // C'est ici que l'on intégrerait l'API SMS (Twilio, Orange API, Telma, etc.)
-        // ex: await sendSMS("+261340000000", alertMessage);
-        
-        console.log(`[ALERTE SMS DÉCLENCHÉE] Envoi au: +261 34 XX XXX XX`);
+        console.log(`[ALERTE SMS DÉCLENCHÉE] Tentative d'envoi...`);
         console.log(`[MESSAGE] ${alertMessage}`);
-        smsSent = true;
+
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
+        const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+        const toNumber = process.env.USER_PHONE_NUMBER;
+
+        if (accountSid && authToken && fromNumber && toNumber) {
+          try {
+            const client = twilio(accountSid, authToken);
+            const message = await client.messages.create({
+              body: alertMessage,
+              from: fromNumber,
+              to: toNumber
+            });
+            console.log(`[SMS ENVOYÉ AVEC SUCCÈS] SID: ${message.sid}`);
+            smsSent = true;
+          } catch (twilioError) {
+            console.error('[ERREUR TWILIO]', twilioError);
+          }
+        } else {
+          console.warn("[ATTENTION] Les clés Twilio ne sont pas configurées. Le SMS n'a pas été réellement envoyé.");
+        }
       }
       
       return NextResponse.json({ 
