@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { TrendingUp, TrendingDown, Minus, Info, Search } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { motion, AnimatePresence } from 'framer-motion'
+import { TrendingUp, TrendingDown, Minus, Info, Search, RefreshCw } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 
@@ -19,21 +19,34 @@ interface MarketItem {
   category: 'Rente' | 'Base' | 'Legume'
 }
 
-const MARKET_DATA: MarketItem[] = [
-  { id: '1', name: 'Vanille (Préparée)', malagasyName: 'Lavany', price: 65000, unit: 'kg', trend: 'up', changePercent: 2.5, region: 'SAVA', category: 'Rente' },
-  { id: '2', name: 'Riz Blanc (Makalioka)', malagasyName: 'Vary Fotsy', price: 3200, unit: 'kg', trend: 'stable', changePercent: 0, region: 'Alaotra Mangoro', category: 'Base' },
-  { id: '3', name: 'Girofle', malagasyName: 'Jirofo', price: 28000, unit: 'kg', trend: 'down', changePercent: 1.2, region: 'Atsinanana', category: 'Rente' },
-  { id: '4', name: 'Maïs (Sec)', malagasyName: 'Katsaka', price: 1500, unit: 'kg', trend: 'up', changePercent: 5.0, region: 'Vakinankaratra', category: 'Base' },
-  { id: '5', name: 'Arachide', malagasyName: 'Voanjo', price: 4500, unit: 'kg', trend: 'stable', changePercent: 0, region: 'Menabe', category: 'Base' },
-  { id: '6', name: 'Cacao (Fèves)', malagasyName: 'Kakao', price: 12000, unit: 'kg', trend: 'up', changePercent: 3.1, region: 'Diana', category: 'Rente' },
-]
+
 
 export function TsenaTab() {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<string>('All')
+  const [marketData, setMarketData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchPrices = async () => {
+    try {
+      const res = await fetch('/api/market/prices')
+      const json = await res.json()
+      if (json.success) {
+        setMarketData(json.data)
+      }
+    } catch(e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchPrices()
+  }, [])
   
-  const filteredData = MARKET_DATA.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase()) || item.malagasyName.toLowerCase().includes(search.toLowerCase())
+  const filteredData = marketData.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase()) || (item.cropId && item.cropId.toLowerCase().includes(search.toLowerCase()))
     const matchesFilter = filter === 'All' || item.category === filter
     return matchesSearch && matchesFilter
   })
@@ -82,11 +95,11 @@ export function TsenaTab() {
               <CardContent className="p-5">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-white">{item.malagasyName}</h3>
-                    <p className="text-sm text-white/60">{item.name}</p>
+                    <h3 className="text-lg font-bold text-white">{item.name}</h3>
+                    <p className="text-sm text-white/60">{item.category}</p>
                   </div>
                   <Badge variant="outline" className="bg-white/5 border-white/10 text-white/80">
-                    {item.region}
+                    Madagascar
                   </Badge>
                 </div>
 
@@ -94,7 +107,7 @@ export function TsenaTab() {
                   <span className="text-3xl font-black tracking-tight text-white">
                     {item.price.toLocaleString('fr-MG')}
                   </span>
-                  <span className="text-white/60 font-medium">Ar/{item.unit}</span>
+                  <span className="text-white/60 font-medium">Ar/kg</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -106,7 +119,7 @@ export function TsenaTab() {
                     {item.trend === 'up' ? <TrendingUp className="h-3 w-3" /> :
                      item.trend === 'down' ? <TrendingDown className="h-3 w-3" /> :
                      <Minus className="h-3 w-3" />}
-                    {item.changePercent}%
+                    {item.trend !== 'stable' ? `${item.percentage}%` : 'Mijadona'}
                   </div>
                   <span className="text-xs text-white/50">Raha oharina omaly</span>
                 </div>

@@ -304,7 +304,30 @@ export function IrrigationTab() {
           )}
         </Button>
 
-        <div className="pt-4">
+        <div className="pt-4 mb-2">
+          <h4 className="text-sm font-semibold text-white/80 uppercase tracking-wider mb-4">Tantaran'ny Hamandoana (12 ora farany)</h4>
+          <div className="h-48 w-full bg-white/5 rounded-xl border border-white/10 p-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={historicalData} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorMoisture" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="time" stroke="rgba(255,255,255,0.3)" fontSize={11} tickMargin={8} />
+                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={11} domain={[0, 100]} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'rgba(10,15,30,0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'white' }}
+                  itemStyle={{ color: '#10b981' }}
+                />
+                <Area type="monotone" dataKey="soilMoisture" name="Hamandoana (%)" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorMoisture)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="pt-2">
           <h4 className="text-sm font-semibold text-white/80 uppercase tracking-wider">Tari-dalana feno</h4>
           <div className="space-y-3 mt-4">
             {advice.map((item, i) => (

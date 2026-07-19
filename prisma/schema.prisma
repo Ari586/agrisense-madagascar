@@ -66,3 +66,14 @@ model SensorReading {
 
   user User? @relation(fields: [userId], references: [id])
 }
+
+model MarketPrice {
+  id          String   @id @default(cuid())
+  cropId      String   @unique // ex: "vary", "vanille"
+  name        String   // ex: "Vary (Riz)"
+  price       Float    // Prix actuel en MGA
+  trend       String   // "up", "down", ou "stable"
+  percentage  Float    // Pourcentage de variation (ex: 2.5)
+  category    String   // "Renivola", "Fanondranana", etc.
+  updatedAt   DateTime @updatedAt
+}

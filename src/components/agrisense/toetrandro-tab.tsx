@@ -253,10 +253,10 @@ function parseWMO(code: number, isNight: boolean = false, wind: number = 0) {
   if (code >= 95) return { condition: "Rivo-doza", type: "stormy", icon: "⛈️", prob: "100%" };
   return { condition: "Masoandro be", type: "clear", icon: "☀️", prob: "10%" };
 }
-
 export function ToetrandroTab() {
   const [activeRegion, setActiveRegion] = useState('Vakinankaratra')
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isLocating, setIsLocating] = useState(false)
   const [liveWeather, setLiveWeather] = useState<any>(null)
   const mapRef = useRef<any>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
@@ -271,6 +271,16 @@ export function ToetrandroTab() {
       setIsRefreshing(true)
       try {
         const { lat, lng } = staticData
+        
+        // 1. Appel API OpenWeatherMap interne
+        const owmRes = await fetch(`/api/weather/live?lat=${lat}&lon=${lng}`)
+        let owmData = null
+        if (owmRes.ok) {
+           const json = await owmRes.json()
+           if (json.success) owmData = json.data
+        }
+
+        // 2. Appel Open-Meteo (pour les previsions et fallback)
         const [meteoRes, iotRes] = await Promise.all([
           fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto`),
           fetch('/api/iot')
@@ -278,6 +288,12 @@ export function ToetrandroTab() {
         
         if (meteoRes.ok) {
           const data = await meteoRes.json()
+          // Injecter OWM par-dessus si disponible
+          if (owmData) {
+             data.current.temperature_2m = owmData.temp
+             data.current.relative_humidity_2m = owmData.humidity
+             data.current.wind_speed_10m = owmData.windSpeed
+          }
           setLiveWeather(data)
         }
         if (iotRes.ok) {
@@ -292,6 +308,36 @@ export function ToetrandroTab() {
     }
     fetchLiveData()
   }, [activeRegion, staticData])
+
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) {
+      alert("Votre navigateur ne supporte pas la géolocalisation.")
+      return
+    }
+    setIsLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        let closestRegion = regionsBase[0]
+        let minDistance = Infinity
+        for (const r of regionsBase) {
+          // Distance euclidienne simple (suffisant pour Mada)
+          const d = Math.sqrt(Math.pow(r.lat - latitude, 2) + Math.pow(r.lng - longitude, 2))
+          if (d < minDistance) {
+            minDistance = d
+            closestRegion = r
+          }
+        }
+        setActiveRegion(closestRegion.id)
+        setIsLocating(false)
+      },
+      (err) => {
+        console.error(err)
+        setIsLocating(false)
+        alert("Impossible de vous localiser. Vérifiez vos autorisations GPS.")
+      }
+    )
+  }
 
   const currentTemp = liveWeather?.current?.temperature_2m !== undefined ? Math.round(liveWeather.current.temperature_2m) : staticData.temp
   const currentRain = liveWeather?.current?.precipitation ?? staticData.rain.val
@@ -426,15 +472,15 @@ export function ToetrandroTab() {
                   if (name.includes(k)) rId = regionNameMapping[k]
                 }
 
-                const isActive = rId === 'Vakinankaratra'
+                // Initial style, will be updated by updateMapStyles anyway
                 const regionColor = (rId && meteoData[rId]) ? meteoData[rId].color : '#555555'
 
                 return {
                   fillColor: regionColor,
-                  color: isActive ? '#ffffff' : regionColor,
-                  weight: isActive ? 2 : 1,
-                  opacity: isActive ? 1 : 0.4,
-                  fillOpacity: isActive ? 0.6 : 0.25,
+                  color: regionColor,
+                  weight: 1,
+                  opacity: 0.4,
+                  fillOpacity: 0.25,
                 }
               },
               onEachFeature: function (feature: any, layer: any) {
@@ -456,7 +502,8 @@ export function ToetrandroTab() {
               },
             }).addTo(mapRef.current)
 
-            updateMapStyles('Vakinankaratra')
+            // We do not call updateMapStyles here because it depends on activeRegion, 
+            // and the other useEffect will handle it
           })
           .catch((err) => {
             console.error('GeoJSON failed, safety basemap fallback used.', err)
@@ -486,10 +533,10 @@ export function ToetrandroTab() {
         mapRef.current = null
       }
     }
-  }, [setActiveRegion, meteoData, updateMapStyles])
+  }, []) // Empty dependency array so map initializes only once
 
   // Update map styles on activeRegion change
-  function updateMapStyles(regionId: string) {
+  const updateMapStyles = React.useCallback((regionId: string) => {
     // Update marker CSS classes manually since Leaflet controls DOM
     document.querySelectorAll('.agri-marker').forEach((el) => el.classList.remove('active'))
     const activeMarkerDiv = document.getElementById('marker-' + regionId)
@@ -521,11 +568,11 @@ export function ToetrandroTab() {
     if (mapRef.current && targetData) {
         mapRef.current.setView([targetData.lat, targetData.lng], 6, { animate: true, duration: 1 })
     }
-  }
+  }, [meteoData])
 
   useEffect(() => {
     updateMapStyles(activeRegion)
-  }, [activeRegion])
+  }, [activeRegion, updateMapStyles])
 
   const handleRefresh = () => {
     setIsRefreshing(true)
@@ -676,7 +723,7 @@ export function ToetrandroTab() {
           </aside>
 
           <main className="flex-1 w-full min-w-0 lg:h-full flex flex-col justify-start lg:justify-between py-2 lg:py-6 relative z-10 gap-8 lg:gap-0">
-              <header className="flex justify-between items-start">
+              <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div className="flex items-center gap-3">
                       <span className="text-white/60"><MapPin className="w-5 h-5" /></span>
                       <div>
@@ -687,10 +734,16 @@ export function ToetrandroTab() {
                       </div>
                   </div>
                   
-                  <button onClick={handleRefresh} className="px-5 py-2 rounded-full glass-panel-toetrandro flex items-center gap-2 hover:bg-white/10 transition-colors text-xs tracking-wider uppercase text-white">
-                      <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                      Havaozina
-                  </button>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <button onClick={handleGeolocate} disabled={isLocating} className="flex-1 sm:flex-none px-4 py-2 rounded-full glass-panel-toetrandro flex items-center justify-center gap-2 hover:bg-white/10 transition-colors text-xs tracking-wider uppercase text-white disabled:opacity-50">
+                        <MapPin className={`w-4 h-4 ${isLocating ? 'animate-bounce text-blue-400' : 'text-blue-400'}`} />
+                        GPS
+                    </button>
+                    <button onClick={handleRefresh} className="flex-1 sm:flex-none px-5 py-2 rounded-full glass-panel-toetrandro flex items-center justify-center gap-2 hover:bg-white/10 transition-colors text-xs tracking-wider uppercase text-white">
+                        <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        Havaozina
+                    </button>
+                  </div>
               </header>
 
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mt-10 lg:mt-0">
