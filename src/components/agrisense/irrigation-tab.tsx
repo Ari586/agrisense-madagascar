@@ -197,9 +197,16 @@ export function IrrigationTab() {
   }
 
   useEffect(() => {
-    fetchSensors()
-    const interval = setInterval(fetchSensors, 30000)
-    return () => clearInterval(interval)
+    const timeout = window.setTimeout(() => {
+      void fetchSensors()
+    }, 0)
+    const interval = setInterval(() => {
+      void fetchSensors()
+    }, 30000)
+    return () => {
+      window.clearTimeout(timeout)
+      clearInterval(interval)
+    }
   }, [])
 
   const latestData = sensorData || { soilMoisture: 0, temperature: 0, humidity: 0, lightLevel: 0, windSpeed: 0, rainfall: 0 }

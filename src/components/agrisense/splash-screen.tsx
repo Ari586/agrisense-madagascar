@@ -166,7 +166,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
               if (step < steps.length - 1) {
                 setStep(step + 1)
               } else {
-                onFinish && onFinish()
+                onFinish?.()
               }
             }}
             className="group relative flex items-center justify-center w-full max-w-[280px] h-14 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 rounded-full text-white font-bold tracking-wide uppercase shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all active:scale-95"

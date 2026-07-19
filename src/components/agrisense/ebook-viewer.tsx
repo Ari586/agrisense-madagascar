@@ -12,6 +12,7 @@ interface EbookViewerProps {
 
 export function EbookViewer({ cropKey, onClose }: EbookViewerProps) {
   const [currentPage, setCurrentPage] = useState(0)
+  const [[page, direction], setPage] = useState([0, 0])
   const crop = CROPS_DATA[cropKey]
 
   if (!crop) return null
@@ -265,7 +266,6 @@ export function EbookViewer({ cropKey, onClose }: EbookViewerProps) {
   }
 
   // To track swipe direction
-  const [[page, direction], setPage] = useState([0, 0])
   const activePage = Math.abs(page % totalPages)
 
   const paginate = (newDirection: number) => {

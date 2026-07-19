@@ -20,14 +20,24 @@ const severityConfig = {
   info: { className: 'bg-teal-500/20 text-teal-300 border-teal-500/30', label: 'Vaovao' },
 } as const
 
+interface WeatherAlert {
+  id: string | number
+  type: string
+  severity: 'critical' | 'warning' | 'info'
+  title: string
+  message: string
+  region: string
+  time: string
+}
+
 const typeIcons: Record<string, FC<{ className?: string }>> = {
   cyclone: Tornado,
   drought: CloudSun,
   rain: CloudRain,
 }
 
-export function WeatherAlerts({ alerts }: { alerts?: any[] }) {
-  const displayAlerts = alerts ?? weatherAlerts
+export function WeatherAlerts({ alerts }: { alerts?: WeatherAlert[] }) {
+  const displayAlerts = alerts ?? weatherAlerts as WeatherAlert[]
 
   return (
     <div className="relative overflow-hidden rounded-xl bg-black/40 backdrop-blur-xl shadow-xl p-6 sm:p-8 h-full flex flex-col text-white">

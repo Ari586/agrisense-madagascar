@@ -27,38 +27,35 @@ export function AiAssistant() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const recognitionRef = useRef<any>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
 
   const toggleRecording = () => {
     if (isRecording && recognitionRef.current) {
-      try {
-        recognitionRef.current.stop()
-      } catch (e) {}
+      recognitionRef.current.stop()
       setIsRecording(false)
       return
     }
 
     if (typeof window === 'undefined') return
-    // @ts-ignore
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    if (!SpeechRecognition) {
+    const SpeechRecognitionConstructor =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognitionConstructor) {
       alert("Votre navigateur ou appareil mobile ne supporte pas la reconnaissance vocale native.")
       return
     }
 
     try {
-      const recognition = new SpeechRecognition()
+      const recognition = new SpeechRecognitionConstructor()
       recognitionRef.current = recognition
-      // Paramètre mg-MG pour la langue Malagasy
       recognition.lang = 'mg-MG'
       recognition.interimResults = false
 
       recognition.onstart = () => setIsRecording(true)
-      recognition.onresult = (event: any) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = event.results[0][0].transcript
         setInput(prev => prev ? prev + ' ' + transcript : transcript)
       }
-      recognition.onerror = (e: any) => {
+      recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error:", e)
         setIsRecording(false)
       }

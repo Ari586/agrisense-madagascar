@@ -45,25 +45,39 @@ export default function Home() {
   const [hasNotifications, setHasNotifications] = useState(false)
 
   useEffect(() => {
-    // Check for active crops in Sahako to show notifications
     const checkNotifications = () => {
       try {
         const saved = localStorage.getItem('agrisense_myfields')
-        if (saved) {
-          const fields = JSON.parse(saved)
-          // Notifications if there are any fields
-          setHasNotifications(fields.length > 0)
-        } else {
+        if (!saved) {
           setHasNotifications(false)
+          return
         }
-      } catch (e) {
+
+        const fields = JSON.parse(saved)
+        setHasNotifications(Array.isArray(fields) && fields.length > 0)
+      } catch {
         setHasNotifications(false)
       }
     }
-    
+
+    const handleStorageEvent = (event: StorageEvent) => {
+      if (event.key === 'agrisense_myfields') {
+        checkNotifications()
+      }
+    }
+
+    const handleFieldsUpdated = () => {
+      checkNotifications()
+    }
+
     checkNotifications()
-    const interval = setInterval(checkNotifications, 3000)
-    return () => clearInterval(interval)
+    window.addEventListener('storage', handleStorageEvent)
+    window.addEventListener('agrisenseMyFieldsUpdated', handleFieldsUpdated)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageEvent)
+      window.removeEventListener('agrisenseMyFieldsUpdated', handleFieldsUpdated)
+    }
   }, [])
 
   useEffect(() => {

@@ -81,9 +81,16 @@ export function MarketPrices() {
   }
 
   useEffect(() => {
-    fetchPrices()
-    const interval = setInterval(fetchPrices, 120000)
-    return () => clearInterval(interval)
+    const timeout = window.setTimeout(() => {
+      void fetchPrices()
+    }, 0)
+    const interval = setInterval(() => {
+      void fetchPrices()
+    }, 120000)
+    return () => {
+      window.clearTimeout(timeout)
+      clearInterval(interval)
+    }
   }, [])
 
   // Normalize prices for chart (use a scale factor for large prices like vanilla)

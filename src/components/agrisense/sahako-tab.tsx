@@ -10,12 +10,18 @@ import { MadagascarMap } from './madagascar-map'
 import { REGION_RECOMMENDATIONS } from './madagascar-map-data'
 import { Map as MapIcon } from 'lucide-react'
 
+type Field = {
+  name: string
+  cropKey: string
+  area: string
+  date: string
+}
+
 export function SahakoTab() {
   const [subTab, setSubTab] = useState<'champs' | 'guide'>('guide')
   const [isAddingField, setIsAddingField] = useState(false)
   const [selectedCropKey, setSelectedCropKey] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('Rehetra')
-  const [myFields, setMyFields] = useState<any[]>([])
   
   // Map feature states
   const [guideViewMode, setGuideViewMode] = useState<'crop' | 'region'>('region')
@@ -35,14 +41,42 @@ export function SahakoTab() {
     return () => window.removeEventListener('openCrop', handleOpenCrop)
   }, [])
 
+  const [myFields, setMyFields] = useState<Field[]>(() => {
+    if (typeof window === 'undefined') {
+      return []
+    }
+
+    const saved = localStorage.getItem('agrisense_myfields')
+    if (!saved) return []
+
+    try {
+      const parsed = JSON.parse(saved) as Field[]
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('agrisense_myfields', JSON.stringify(myFields))
+      window.dispatchEvent(new Event('agrisenseMyFieldsUpdated'))
+    } catch {
+      // Ignore storage failures on limited browsers
+    }
+  }, [myFields])
+
   const handleAddField = () => {
     if (!newName || !newArea || !newDate) return
-    setMyFields([...myFields, {
-      name: newName,
-      cropKey: newCrop,
-      area: newArea,
-      date: newDate
-    }])
+    setMyFields((current) => [
+      ...current,
+      {
+        name: newName,
+        cropKey: newCrop,
+        area: newArea,
+        date: newDate,
+      },
+    ])
     setIsAddingField(false)
     setNewName('')
     setNewArea('')

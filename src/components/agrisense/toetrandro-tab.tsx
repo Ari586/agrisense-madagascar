@@ -5,12 +5,6 @@ import 'leaflet/dist/leaflet.css'
 import { RefreshCw, MapPin } from 'lucide-react'
 import { useBgStore } from '@/lib/bg-store'
 
-// Dynamic import of leaflet to avoid SSR issues
-let L: any = null
-if (typeof window !== 'undefined') {
-  L = require('leaflet')
-}
-
 const WEEKDAYS_MG = ['Alahady', 'Alatsinainy', 'Talata', 'Alarobia', 'Alakamisy', 'Zoma', 'Sabotsy']
 const MONTHS_MG = ['Janoary', 'Febroary', 'Martsa', 'Aprily', 'Mey', 'Jona', 'Jolay', 'Aogositra', 'Septambra', 'Oktobra', 'Novambra', 'Desambra']
 
@@ -387,112 +381,117 @@ export function ToetrandroTab() {
   }, [dynamicBgUrl, data.type, setBg]);
 
   useEffect(() => {
-    if (!L || !mapContainerRef.current) return
+    if (!mapContainerRef.current) return
 
-    // Initialize Map
-    if (!mapRef.current) {
-      mapRef.current = L.map(mapContainerRef.current, {
+    let cancelled = false
+    const initializeMap = async () => {
+      const leafletModule = await import('leaflet')
+      if (cancelled || !mapContainerRef.current) return
+      const leaflet = leafletModule.default ?? leafletModule
+
+      if (!mapRef.current) {
+        mapRef.current = leaflet.map(mapContainerRef.current, {
           zoomControl: false,
           attributionControl: false,
           maxBounds: [[-26.0, 40.0], [-11.0, 53.0]],
-          minZoom: 4, maxZoom: 8
-      }).setView([-18.8792, 47.5052], 5.5)
+          minZoom: 4,
+          maxZoom: 8,
+        }).setView([-18.8792, 47.5052], 5.5)
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+        leaflet.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
           subdomains: 'abcd',
           maxZoom: 10,
-          opacity: 0.3 
-      }).addTo(mapRef.current)
+          opacity: 0.3,
+        }).addTo(mapRef.current)
 
-      fetch('https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/main/releaseData/gbOpen/MDG/ADM1/geoBoundaries-MDG-ADM1_simplified.geojson')
-      .then(async res => {
-          if (!res.ok) throw new Error('Failed to fetch GeoJSON')
-          const text = await res.text()
-          try {
+        fetch('https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/main/releaseData/gbOpen/MDG/ADM1/geoBoundaries-MDG-ADM1_simplified.geojson')
+          .then(async (res) => {
+            if (!res.ok) throw new Error('Failed to fetch GeoJSON')
+            const text = await res.text()
+            try {
               return JSON.parse(text)
-          } catch (e) {
+            } catch (e) {
               throw new Error('Invalid JSON')
-          }
-      })
-      .then(geoData => {
-          geoJsonLayerRef.current = L.geoJSON(geoData, {
-              style: function(feature: any) {
-                  const rawName = feature.properties.shapeName || feature.properties.name || feature.properties.NAME || ""
-                  const name = rawName.toLowerCase()
-                  
-                  let rId: string | null = null
-                  for(let k in regionNameMapping) { if(name.includes(k)) rId = regionNameMapping[k] }
-                  
-                  // In useEffect closures, activeRegion might be stale, but we update styles dynamically in a subsequent effect
-                  const isActive = rId === 'Vakinankaratra' 
-                  const regionColor = (rId && meteoData[rId]) ? meteoData[rId].color : '#555555'
+            }
+          })
+          .then((geoData) => {
+            if (!mapRef.current) return
+            geoJsonLayerRef.current = leaflet.geoJSON(geoData, {
+              style: function (feature: any) {
+                const rawName = feature.properties.shapeName || feature.properties.name || feature.properties.NAME || ''
+                const name = rawName.toLowerCase()
 
-                  return {
-                      fillColor: regionColor,
-                      color: isActive ? '#ffffff' : regionColor,
-                      weight: isActive ? 2 : 1,
-                      opacity: isActive ? 1 : 0.4,
-                      fillOpacity: isActive ? 0.6 : 0.25 
-                  }
+                let rId: string | null = null
+                for (const k in regionNameMapping) {
+                  if (name.includes(k)) rId = regionNameMapping[k]
+                }
+
+                const isActive = rId === 'Vakinankaratra'
+                const regionColor = (rId && meteoData[rId]) ? meteoData[rId].color : '#555555'
+
+                return {
+                  fillColor: regionColor,
+                  color: isActive ? '#ffffff' : regionColor,
+                  weight: isActive ? 2 : 1,
+                  opacity: isActive ? 1 : 0.4,
+                  fillOpacity: isActive ? 0.6 : 0.25,
+                }
               },
-              onEachFeature: function(feature: any, layer: any) {
-                  const rawName = feature.properties.shapeName || feature.properties.name || ""
-                  const name = rawName.toLowerCase()
-                  
-                  let rId: string | null = null
-                  for(let k in regionNameMapping) { if(name.includes(k)) rId = regionNameMapping[k] }
-                  
-                  if(rId) {
-                      layer.on('click', () => setActiveRegion(rId))
-                      layer.bindTooltip(meteoData[rId].name, {
-                          sticky: true,
-                          className: 'glass-tooltip'
-                      })
-                  }
-              }
-          }).addTo(mapRef.current)
+              onEachFeature: function (feature: any, layer: any) {
+                const rawName = feature.properties.shapeName || feature.properties.name || ''
+                const name = rawName.toLowerCase()
 
-          updateMapStyles('Vakinankaratra')
-      }).catch(err => {
-          console.error("GeoJSON failed, safety basemap fallback used.", err)
-      })
+                let rId: string | null = null
+                for (const k in regionNameMapping) {
+                  if (name.includes(k)) rId = regionNameMapping[k]
+                }
 
-      // Add Markers
-      Object.keys(meteoData).forEach(regionId => {
-          const rData = meteoData[regionId]
-          const customIcon = L.divIcon({
-              className: '',
-              html: `<div class="w-2.5 h-2.5 agri-marker" id="marker-${regionId}" style="--marker-color: ${rData.color};"></div>`,
-              iconSize: [10, 10], iconAnchor: [5, 5]
+                if (rId) {
+                  layer.on('click', () => setActiveRegion(rId))
+                  layer.bindTooltip(meteoData[rId].name, {
+                    sticky: true,
+                    className: 'glass-tooltip',
+                  })
+                }
+              },
+            }).addTo(mapRef.current)
+
+            updateMapStyles('Vakinankaratra')
           })
-          const marker = L.marker([rData.lat, rData.lng], { icon: customIcon }).addTo(mapRef.current)
-          
-          marker.on('click', () => setActiveRegion(regionId))
-          marker.bindTooltip(rData.name, {
-              direction: 'top',
-              offset: [0, -10],
-              className: 'glass-tooltip'
+          .catch((err) => {
+            console.error('GeoJSON failed, safety basemap fallback used.', err)
           })
-      })
+      }
 
-      setTimeout(() => { mapRef.current?.invalidateSize() }, 300)
+      Object.keys(meteoData).forEach((regionId) => {
+        const rData = meteoData[regionId]
+        const customIcon = leaflet.divIcon({
+          className: '',
+          html: `<div class="w-2.5 h-2.5 agri-marker" id="marker-${regionId}" style="--marker-color: ${rData.color};"></div>`,
+          iconSize: [10, 10],
+          iconAnchor: [5, 5],
+        })
+        const marker = leaflet.marker([rData.lat, rData.lng], { icon: customIcon }).addTo(mapRef.current)
+
+        marker.on('click', () => setActiveRegion(regionId))
+      })
     }
 
+    void initializeMap()
+
     return () => {
-      // Cleanup
+      cancelled = true
       if (mapRef.current) {
         mapRef.current.remove()
         mapRef.current = null
       }
     }
-  }, []) // Run once
+  }, [setActiveRegion, meteoData, updateMapStyles])
 
   // Update map styles on activeRegion change
   function updateMapStyles(regionId: string) {
-    if (!L) return
-
     // Update marker CSS classes manually since Leaflet controls DOM
-    document.querySelectorAll('.agri-marker').forEach(el => el.classList.remove('active'))
+    document.querySelectorAll('.agri-marker').forEach((el) => el.classList.remove('active'))
     const activeMarkerDiv = document.getElementById('marker-' + regionId)
     if(activeMarkerDiv) activeMarkerDiv.classList.add('active')
 

@@ -15,6 +15,7 @@ interface Message {
 export function VoiceAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [isListening, setIsListening] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', text: "Salama! Inona no azoko hanampiana anao momba ny fambolena anio?" }
   ])
@@ -22,25 +23,53 @@ export function VoiceAssistant() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const recognitionRef = useRef<any>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+
+  const handleSend = async (text: string = inputText) => {
+    if (!text.trim()) return
+
+    const newMessages = [...messages, { role: 'user', text }]
+    setMessages(newMessages)
+    setInputText('')
+    setIsLoading(true)
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      })
+
+      if (!res.ok) throw new Error('Network response was not ok')
+      const data = await res.json()
+      setMessages([...newMessages, { role: 'assistant', text: data.reply ?? "Miala tsiny, nisy olana ara-teknika." }])
+    } catch (error) {
+      console.error(error)
+      setMessages([...newMessages, { role: 'assistant', text: "Miala tsiny, nisy olana ara-teknika. Andramo indray." }])
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition()
+      const SpeechRecognitionConstructor =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+      if (SpeechRecognitionConstructor) {
+        setSpeechSupported(true)
+        const recognition = new SpeechRecognitionConstructor()
         recognition.continuous = false
         recognition.interimResults = false
         recognition.lang = 'mg-MG'
 
-        recognition.onresult = (event: any) => {
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
           const transcript = event.results[0][0].transcript
           setInputText(transcript)
           setIsListening(false)
           handleSend(transcript)
         }
 
-        recognition.onerror = (event: any) => {
+        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
           console.error('Speech recognition error', event.error)
           setIsListening(false)
         }
@@ -67,33 +96,6 @@ export function VoiceAssistant() {
     } else {
       recognitionRef.current?.start()
       setIsListening(true)
-    }
-  }
-
-  const handleSend = async (text: string = inputText) => {
-    if (!text.trim()) return
-
-    const newMessages = [...messages, { role: 'user', text }]
-    setMessages(newMessages as Message[])
-    setInputText('')
-    setIsLoading(true)
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
-      })
-
-      if (!res.ok) throw new Error('Network response was not ok')
-      
-      const data = await res.json()
-      setMessages([...newMessages, { role: 'assistant', text: data.reply }])
-    } catch (error) {
-      console.error(error)
-      setMessages([...newMessages, { role: 'assistant', text: "Miala tsiny, nisy olana ara-teknika. Andramo indray." }])
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -157,7 +159,7 @@ export function VoiceAssistant() {
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-white/10 flex gap-2">
-                  {recognitionRef.current && (
+                  {speechSupported && (
                     <Button
                       variant="outline"
                       size="icon"

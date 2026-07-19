@@ -214,7 +214,7 @@ function IotSensorCard({ data }: { data: SensorData }) {
     { label: 'Hamandoan\'ny Rivotra', value: data.humidity, unit: '%', icon: CloudRain, color: 'text-sky-500', bg: 'bg-sky-500/10', barColor: 'data-[slot=progress-indicator]:bg-sky-500', max: 100 },
     { label: 'Fahazavana', value: data.lightLevel, unit: '%', icon: Sun, color: 'text-yellow-500', bg: 'bg-yellow-500/10', barColor: 'data-[slot=progress-indicator]:bg-yellow-500', max: 100 },
     { label: 'Rivotra', value: data.windSpeed, unit: 'km/h', icon: CloudSun, color: 'text-teal-500', bg: 'bg-teal-500/10', barColor: 'data-[slot=progress-indicator]:bg-teal-500', max: 60 },
-    { rotsakOrana: 'Rotsak\'orana', value: data.rainfall, unit: 'mm', icon: Gauge, color: 'text-primary', bg: 'bg-primary/10', barColor: 'data-[slot=progress-indicator]:bg-primary', max: 50 },
+    { label: 'Rotsak\'orana', value: data.rainfall, unit: 'mm', icon: Gauge, color: 'text-primary', bg: 'bg-primary/10', barColor: 'data-[slot=progress-indicator]:bg-primary', max: 50 },
   ]
 
   return (
