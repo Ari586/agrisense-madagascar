@@ -43,6 +43,7 @@ export default function Home() {
   const [showSplash, setShowSplash] = useState(true)
   const [activeTab, setActiveTab] = useState<string>("home")
   const [hasNotifications, setHasNotifications] = useState(false)
+  const [isEbookOpen, setIsEbookOpen] = useState(false)
 
   useEffect(() => {
     const checkNotifications = () => {
@@ -166,7 +167,7 @@ export default function Home() {
                     className="w-full"
                   >
                     {activeTab === 'home' && <HomeTab />}
-                    {activeTab === 'sahako' && <SahakoTab />}
+                    {activeTab === 'sahako' && <SahakoTab onEbookOpenChange={setIsEbookOpen} />}
                     {activeTab === 'tetiandro' && <TetiandroTab />}
                     {activeTab === 'kajy' && <KajyTab />}
                     {activeTab === 'tsena' && <TsenaTab />}
@@ -190,7 +191,7 @@ export default function Home() {
       )}
       
       {/* Global Floating AI Voice Assistant */}
-      {!showSplash && <VoiceAssistant />}
+      {!showSplash && !isEbookOpen && <VoiceAssistant />}
       
       <DeveloperInfo />
     </div>

@@ -52,7 +52,7 @@ export function VoiceAssistant() {
   }
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const setupRecognition = window.requestAnimationFrame(() => {
       const SpeechRecognitionConstructor =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
       if (SpeechRecognitionConstructor) {
@@ -80,6 +80,12 @@ export function VoiceAssistant() {
 
         recognitionRef.current = recognition
       }
+
+      setSpeechSupported(Boolean(SpeechRecognitionConstructor))
+    })
+
+    return () => {
+      window.cancelAnimationFrame(setupRecognition)
     }
   }, [])
 

@@ -93,13 +93,13 @@ export function AiAssistant() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ message: text }),
       })
       if (!res.ok) throw new Error('Erreur serveur')
       const data = await res.json()
       const assistantMsg: Message = {
         role: 'assistant',
-        content: data.response ?? 'Miala tsiny, tsy afaka mamaly aho izao.',
+        content: data.reply ?? 'Miala tsiny, tsy afaka mamaly aho izao.',
       }
       setMessages((prev) => [...prev, assistantMsg])
       

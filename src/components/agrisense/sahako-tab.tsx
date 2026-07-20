@@ -17,7 +17,11 @@ type Field = {
   date: string
 }
 
-export function SahakoTab() {
+interface SahakoTabProps {
+  onEbookOpenChange?: (isOpen: boolean) => void
+}
+
+export function SahakoTab({ onEbookOpenChange }: SahakoTabProps) {
   const [subTab, setSubTab] = useState<'champs' | 'guide'>('guide')
   const [isAddingField, setIsAddingField] = useState(false)
   const [selectedCropKey, setSelectedCropKey] = useState<string | null>(null)
@@ -40,6 +44,14 @@ export function SahakoTab() {
     window.addEventListener('openCrop', handleOpenCrop)
     return () => window.removeEventListener('openCrop', handleOpenCrop)
   }, [])
+
+  useEffect(() => {
+    onEbookOpenChange?.(selectedCropKey !== null)
+  }, [onEbookOpenChange, selectedCropKey])
+
+  useEffect(() => {
+    return () => onEbookOpenChange?.(false)
+  }, [onEbookOpenChange])
 
   const [myFields, setMyFields] = useState<Field[]>(() => {
     if (typeof window === 'undefined') {

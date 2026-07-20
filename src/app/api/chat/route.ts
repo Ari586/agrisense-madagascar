@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 
 const SYSTEM_PROMPT = `Tu es "AgriSense", un assistant vocal et textuel expert en agriculture malgache.
 L'agriculteur va te poser une question, souvent en malagasy ou en français.
@@ -7,18 +8,33 @@ L'agriculteur va te poser une question, souvent en malagasy ou en français.
 - Sois très chaleureux et encourageant.
 - Ne fais pas de listes à puces trop longues, utilise des phrases simples.`;
 
+const chatRequestSchema = z.object({
+  message: z.string().trim().min(1).max(2_000),
+}).strict()
+
 export async function POST(request: NextRequest) {
+  let body: unknown
+
   try {
-    const body = await request.json()
-    const { message } = body
+    body = await request.json()
+  } catch {
+    return NextResponse.json(
+      { error: 'Le corps de la requête doit être un JSON valide.' },
+      { status: 400 }
+    )
+  }
 
-    if (!message || typeof message !== 'string') {
-      return NextResponse.json(
-        { error: 'Le champ "message" est requis.' },
-        { status: 400 }
-      )
-    }
+  const parsedBody = chatRequestSchema.safeParse(body)
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { error: 'Le message doit contenir entre 1 et 2 000 caractères.' },
+      { status: 400 }
+    )
+  }
 
+  const { message } = parsedBody.data
+
+  try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(

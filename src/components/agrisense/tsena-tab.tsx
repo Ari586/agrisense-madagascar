@@ -27,22 +27,28 @@ export function TsenaTab() {
   const [marketData, setMarketData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchPrices = async () => {
-    try {
-      const res = await fetch('/api/market/prices')
-      const json = await res.json()
-      if (json.success) {
-        setMarketData(json.data)
-      }
-    } catch(e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    fetchPrices()
+    let isActive = true
+
+    void fetch('/api/market/prices')
+      .then((res) => res.json())
+      .then((json) => {
+        if (isActive && json.success) {
+          setMarketData(json.data)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+      .finally(() => {
+        if (isActive) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      isActive = false
+    }
   }, [])
   
   const filteredData = marketData.filter(item => {
@@ -83,51 +89,55 @@ export function TsenaTab() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredData.map((item, idx) => (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            key={item.id}
-          >
-            <Card className="bg-black/40 backdrop-blur-xl border-white/10 overflow-hidden">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-white">{item.name}</h3>
-                    <p className="text-sm text-white/60">{item.category}</p>
+      {loading ? (
+        <div className="py-12 text-center text-sm text-white/60">Mitady ny vidiny farany...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredData.map((item, idx) => (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              key={item.id}
+            >
+              <Card className="bg-black/40 backdrop-blur-xl border-white/10 overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-white">{item.name}</h3>
+                      <p className="text-sm text-white/60">{item.category}</p>
+                    </div>
+                    <Badge variant="outline" className="bg-white/5 border-white/10 text-white/80">
+                      Madagascar
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="bg-white/5 border-white/10 text-white/80">
-                    Madagascar
-                  </Badge>
-                </div>
 
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-3xl font-black tracking-tight text-white">
-                    {item.price.toLocaleString('fr-MG')}
-                  </span>
-                  <span className="text-white/60 font-medium">Ar/kg</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${
-                    item.trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' :
-                    item.trend === 'down' ? 'bg-red-500/20 text-red-400' :
-                    'bg-blue-500/20 text-blue-400'
-                  }`}>
-                    {item.trend === 'up' ? <TrendingUp className="h-3 w-3" /> :
-                     item.trend === 'down' ? <TrendingDown className="h-3 w-3" /> :
-                     <Minus className="h-3 w-3" />}
-                    {item.trend !== 'stable' ? `${item.percentage}%` : 'Mijadona'}
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-3xl font-black tracking-tight text-white">
+                      {item.price.toLocaleString('fr-MG')}
+                    </span>
+                    <span className="text-white/60 font-medium">Ar/kg</span>
                   </div>
-                  <span className="text-xs text-white/50">Raha oharina omaly</span>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${
+                      item.trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' :
+                      item.trend === 'down' ? 'bg-red-500/20 text-red-400' :
+                      'bg-blue-500/20 text-blue-400'
+                    }`}>
+                      {item.trend === 'up' ? <TrendingUp className="h-3 w-3" /> :
+                       item.trend === 'down' ? <TrendingDown className="h-3 w-3" /> :
+                       <Minus className="h-3 w-3" />}
+                      {item.trend !== 'stable' ? `${item.percentage}%` : 'Mijadona'}
+                    </div>
+                    <span className="text-xs text-white/50">Raha oharina omaly</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-200 mt-4">
         <Info className="h-5 w-5 shrink-0 mt-0.5" />

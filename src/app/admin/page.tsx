@@ -16,22 +16,28 @@ export default function AdminPage() {
   const { toast } = useToast()
 
   useEffect(() => {
-    fetchPrices()
-  }, [])
+    let isActive = true
 
-  const fetchPrices = async () => {
-    try {
-      const res = await fetch('/api/market/prices')
-      const json = await res.json()
-      if (json.success) {
-        setPrices(json.data)
-      }
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
+    void fetch('/api/market/prices')
+      .then((res) => res.json())
+      .then((json) => {
+        if (isActive && json.success) {
+          setPrices(json.data)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+      .finally(() => {
+        if (isActive) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      isActive = false
     }
-  }
+  }, [])
 
   const handleChange = (id: string, field: string, value: any) => {
     setPrices(prices.map(p => p.id === id ? { ...p, [field]: value } : p))
@@ -51,7 +57,7 @@ export default function AdminPage() {
       } else {
         toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible de sauvegarder.' })
       }
-    } catch (e) {
+    } catch {
       toast({ variant: 'destructive', title: 'Erreur', description: 'Erreur réseau.' })
     } finally {
       setSaving(false)

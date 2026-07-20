@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 
 const SYSTEM_PROMPT = `Tu es un expert agronome malgache. Analyse la photo fournie (plante, champ, sol, maladie) et réponds ENTIÈREMENT EN MALAGASY (avec les termes techniques ou noms en français entre parenthèses).
 
@@ -26,6 +27,16 @@ Si c'est un sol ou un terrain :
 
 Dans tous les cas :
 Réponds en JSON valide avec EXACTEMENT ces clés: { "disease": "", "confidence": 0-100, "severity": "low|medium|high|critical", "symptoms": "", "treatment": "", "prevention": "", "malagasyName": "" }`
+
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024
+const MAX_IMAGE_BASE64_LENGTH = Math.ceil((MAX_IMAGE_BYTES * 4) / 3)
+const MAX_REQUEST_BYTES = MAX_IMAGE_BASE64_LENGTH + 1_024
+const BASE64_PATTERN = /^[A-Za-z0-9+/]+={0,2}$/
+const DATA_URI_PATTERN = /^data:(image\/(?:jpeg|png|webp|heic));base64,([A-Za-z0-9+/]+={0,2})$/
+
+const diagnosisRequestSchema = z.object({
+  image: z.string().min(1).max(MAX_IMAGE_BASE64_LENGTH + 128),
+}).strict()
 
 interface DiagnosisResponse {
   disease: string
@@ -74,28 +85,58 @@ function extractJson(text: string): string | null {
   return null
 }
 
+function parseImage(image: string) {
+  const dataUriMatch = image.match(DATA_URI_PATTERN)
+  if (dataUriMatch) {
+    const [, mimeType, base64Data] = dataUriMatch
+    return { base64Data, mimeType }
+  }
+
+  if (image.length % 4 === 0 && BASE64_PATTERN.test(image)) {
+    return { base64Data: image, mimeType: 'image/jpeg' }
+  }
+
+  return null
+}
+
 export async function POST(request: NextRequest) {
+  const contentLength = Number(request.headers.get('content-length'))
+  if (Number.isFinite(contentLength) && contentLength > MAX_REQUEST_BYTES) {
+    return NextResponse.json(
+      { error: 'L’image ne doit pas dépasser 5 Mo.' },
+      { status: 413 }
+    )
+  }
+
+  let body: unknown
+
   try {
-    const body = await request.json()
-    const { image } = body
+    body = await request.json()
+  } catch {
+    return NextResponse.json(
+      { error: 'Le corps de la requête doit être un JSON valide.' },
+      { status: 400 }
+    )
+  }
 
-    if (!image || typeof image !== 'string') {
-      return NextResponse.json(
-        { error: 'Le champ "image" est requis (base64 ou data URI).' },
-        { status: 400 }
-      )
-    }
+  const parsedBody = diagnosisRequestSchema.safeParse(body)
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      { error: 'Le champ "image" doit contenir une image valide.' },
+      { status: 400 }
+    )
+  }
 
-    let base64Data = image;
-    let mimeType = 'image/jpeg';
-    if (image.startsWith('data:')) {
-      const parts = image.split(',');
-      const match = parts[0].match(/:(.*?);/);
-      if (match) {
-         mimeType = match[1];
-      }
-      base64Data = parts[1];
-    }
+  const imageData = parseImage(parsedBody.data.image)
+  if (!imageData) {
+    return NextResponse.json(
+      { error: 'Formats acceptés : JPEG, PNG, WebP et HEIC encodés en base64.' },
+      { status: 400 }
+    )
+  }
+
+  try {
+    const { base64Data, mimeType } = imageData
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -131,13 +172,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(parsed)
   } catch (err) {
     console.error('[/api/diagnose] Error:', err)
-
-    if (err instanceof SyntaxError) {
-      return NextResponse.json(
-        { error: 'Le corps de la requête doit être un JSON valide.' },
-        { status: 400 }
-      )
-    }
 
     return NextResponse.json(
       { error: "Une erreur interne s'est produite. Veuillez réessayer." },
