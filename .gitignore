@@ -20,6 +20,9 @@ node_modules
 # production
 /build
 
+# Capacitor static web bundle
+/www/
+
 # misc
 .DS_Store
 *.pem
