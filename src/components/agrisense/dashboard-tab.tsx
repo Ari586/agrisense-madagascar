@@ -18,7 +18,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { DashboardHero } from './dashboard-hero'
 import dynamic from 'next/dynamic'
 
 import { Separator } from '@/components/ui/separator'
@@ -161,9 +160,6 @@ export function DashboardTab() {
       animate={{ opacity: 1 }}
       className="flex flex-col gap-6 lg:gap-8 pb-24 lg:pb-8"
     >
-      {/* Hero Section */}
-      <DashboardHero />
-      
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
