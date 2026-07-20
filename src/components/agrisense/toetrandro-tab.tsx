@@ -290,9 +290,9 @@ export function ToetrandroTab() {
           const data = await meteoRes.json()
           // Injecter OWM par-dessus si disponible
           if (owmData) {
-             data.current.temperature_2m = owmData.temp
-             data.current.relative_humidity_2m = owmData.humidity
-             data.current.wind_speed_10m = owmData.windSpeed
+             (data.current as any).temperature_2m = (owmData as any).temp
+             (data.current as any).relative_humidity_2m = (owmData as any).humidity
+             (data.current as any).wind_speed_10m = (owmData as any).windSpeed
           }
           setLiveWeather(data)
         }

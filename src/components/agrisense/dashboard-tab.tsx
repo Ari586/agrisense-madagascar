@@ -241,7 +241,7 @@ function IotSensorCard({ data }: { data: SensorData }) {
                 <div className={`p-2 rounded-md ${s.bg}`}>
                   <s.icon className={`h-4 w-4 ${s.color}`} />
                 </div>
-                <span className="text-sm font-medium tracking-wide truncate pr-2 text-white">{s.label || s.rotsakOrana}</span>
+                <span className="text-sm font-medium tracking-wide truncate pr-2 text-white">{s.label}</span>
               </div>
               <span className="text-lg font-medium tabular-nums whitespace-nowrap text-white">
                 {s.value}<span className="text-xs text-white/70 ml-1">{s.unit}</span>

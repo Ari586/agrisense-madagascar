@@ -339,7 +339,7 @@ export function WebGLWeatherOverlay({ weatherType }: { weatherType: string }) {
     
     function createLightning() {
       const x = Math.random() * width;
-      const branches = [];
+      const branches: any[] = [];
       let currentX = x;
       let currentY = 0;
       

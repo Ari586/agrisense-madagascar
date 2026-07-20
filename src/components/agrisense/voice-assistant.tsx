@@ -23,13 +23,13 @@ export function VoiceAssistant() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const recognitionRef = useRef<any>(null)
 
   const handleSend = async (text: string = inputText) => {
     if (!text.trim()) return
 
-    const newMessages = [...messages, { role: 'user', text }]
-    setMessages(newMessages)
+    const newMessages = [...messages, { role: 'user' as const, text }]
+    setMessages(newMessages as any)
     setInputText('')
     setIsLoading(true)
 
@@ -42,10 +42,10 @@ export function VoiceAssistant() {
 
       if (!res.ok) throw new Error('Network response was not ok')
       const data = await res.json()
-      setMessages([...newMessages, { role: 'assistant', text: data.reply ?? "Miala tsiny, nisy olana ara-teknika." }])
+      setMessages([...newMessages, { role: 'assistant' as const, text: data.reply ?? "Miala tsiny, nisy olana ara-teknika." }] as any)
     } catch (error) {
       console.error(error)
-      setMessages([...newMessages, { role: 'assistant', text: "Miala tsiny, nisy olana ara-teknika. Andramo indray." }])
+      setMessages([...newMessages, { role: 'assistant' as const, text: "Miala tsiny, nisy olana ara-teknika. Andramo indray." }] as any)
     } finally {
       setIsLoading(false)
     }
@@ -62,14 +62,14 @@ export function VoiceAssistant() {
         recognition.interimResults = false
         recognition.lang = 'mg-MG'
 
-        recognition.onresult = (event: SpeechRecognitionEvent) => {
+        recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript
           setInputText(transcript)
           setIsListening(false)
           handleSend(transcript)
         }
 
-        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        recognition.onerror = (event: any) => {
           console.error('Speech recognition error', event.error)
           setIsListening(false)
         }

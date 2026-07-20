@@ -27,7 +27,7 @@ export function AiAssistant() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const recognitionRef = useRef<any>(null)
 
   const toggleRecording = () => {
     if (isRecording && recognitionRef.current) {
@@ -51,11 +51,11 @@ export function AiAssistant() {
       recognition.interimResults = false
 
       recognition.onstart = () => setIsRecording(true)
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
+      recognition.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript
         setInput(prev => prev ? prev + ' ' + transcript : transcript)
       }
-      recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
+      recognition.onerror = (e: any) => {
         console.error("Speech recognition error:", e)
         setIsRecording(false)
       }

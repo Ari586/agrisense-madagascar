@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
 import Script from "next/script";
+import { PWAInstall } from "@/components/PWAInstall";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,6 +56,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <PWAInstall />
           {children}
           <Toaster />
         </ThemeProvider>
