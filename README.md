@@ -76,7 +76,13 @@ AgriSense Madagascar est une application web moderne (Progressive Web App) dédi
 - correction de l’étiquette de pluie dans le tableau de bord
 - ajout d’une configuration GitHub Actions pour CI
 - ajout d’un fichier `.env.example`
+## ⚠️ À Améliorer
 
+- Tests unitaires/E2E manquants
+- Bundle trop lourd (246 KB fichier legacy)
+- SQLite → PostgreSQL pour production
+- Audit de sécurité des clés API
+- Documentation API (Swagger)
 ## 📌 Contribution
 
 Les contributions sont les bienvenues :
