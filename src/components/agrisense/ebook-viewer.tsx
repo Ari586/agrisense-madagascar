@@ -234,7 +234,7 @@ export function EbookViewer({ cropKey, onClose }: EbookViewerProps) {
             onClick={onClose}
             className="px-6 py-3 bg-green-600 text-white font-bold rounded-xl shadow-md hover:bg-green-700 transition-all active:scale-95"
           >
-            Hikatona
+            Manakatona
           </button>
         </div>
       </div>
