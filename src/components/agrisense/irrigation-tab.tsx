@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { apiUrl } from '@/lib/api'
 import {
   AreaChart,
   Area,
@@ -178,7 +179,7 @@ export function IrrigationTab() {
 
   const fetchSensors = async () => {
     try {
-      const res = await fetch('/api/sensors')
+      const res = await fetch(apiUrl('/api/sensors'))
       if (res.ok) {
         const data: SensorReading = await res.json()
         setSensorData(data)

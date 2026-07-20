@@ -20,6 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { apiUrl } from '@/lib/api'
 import {
   BarChart,
   Bar,
@@ -67,7 +68,7 @@ export function MarketPrices() {
 
   const fetchPrices = async () => {
     try {
-      const res = await fetch('/api/market')
+      const res = await fetch(apiUrl('/api/market'))
       if (res.ok) {
         const data = await res.json()
         setPrices(data.prices ?? [])

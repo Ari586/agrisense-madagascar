@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { smsNotifications as initialSmsNotifications } from './mock-data'
 import { useToast } from '@/hooks/use-toast'
+import { apiUrl } from '@/lib/api'
 
 export function SmsNotifications() {
   const [notifications, setNotifications] = useState(initialSmsNotifications)
@@ -18,7 +19,7 @@ export function SmsNotifications() {
   const handleSimulateAlert = async () => {
     setIsSimulating(true)
     try {
-      const response = await fetch('/api/iot', {
+      const response = await fetch(apiUrl('/api/iot'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

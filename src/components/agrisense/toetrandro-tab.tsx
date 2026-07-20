@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import 'leaflet/dist/leaflet.css'
 import { RefreshCw, MapPin } from 'lucide-react'
 import { useBgStore } from '@/lib/bg-store'
+import { apiUrl } from '@/lib/api'
 
 const WEEKDAYS_MG = ['Alahady', 'Alatsinainy', 'Talata', 'Alarobia', 'Alakamisy', 'Zoma', 'Sabotsy']
 const MONTHS_MG = ['Janoary', 'Febroary', 'Martsa', 'Aprily', 'Mey', 'Jona', 'Jolay', 'Aogositra', 'Septambra', 'Oktobra', 'Novambra', 'Desambra']
@@ -273,7 +274,7 @@ export function ToetrandroTab() {
         const { lat, lng } = staticData
         
         // 1. Appel API OpenWeatherMap interne
-        const owmRes = await fetch(`/api/weather/live?lat=${lat}&lon=${lng}`)
+        const owmRes = await fetch(apiUrl(`/api/weather/live?lat=${lat}&lon=${lng}`))
         let owmData = null
         if (owmRes.ok) {
            const json = await owmRes.json()
@@ -283,7 +284,7 @@ export function ToetrandroTab() {
         // 2. Appel Open-Meteo (pour les previsions et fallback)
         const [meteoRes, iotRes] = await Promise.all([
           fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto`),
-          fetch('/api/iot')
+          fetch(apiUrl('/api/iot'))
         ])
         
         if (meteoRes.ok) {

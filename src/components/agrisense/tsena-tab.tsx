@@ -6,6 +6,7 @@ import { TrendingUp, TrendingDown, Minus, Info, Search, RefreshCw } from 'lucide
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { apiUrl } from '@/lib/api'
 
 interface MarketItem {
   id: string
@@ -30,7 +31,7 @@ export function TsenaTab() {
   useEffect(() => {
     let isActive = true
 
-    void fetch('/api/market/prices')
+    void fetch(apiUrl('/api/market/prices'))
       .then((res) => res.json())
       .then((json) => {
         if (isActive && json.success) {

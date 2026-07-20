@@ -24,6 +24,7 @@ import dynamic from 'next/dynamic'
 import { Separator } from '@/components/ui/separator'
 import { WeatherAlerts } from './weather-alerts'
 import { ToetrandroTab } from './toetrandro-tab'
+import { apiUrl } from '@/lib/api'
 import {
   AreaChart,
   Area,
@@ -90,8 +91,8 @@ export function DashboardTab() {
   const fetchAll = async () => {
     try {
       const [sensorRes, alertsRes] = await Promise.all([
-        fetch('/api/sensors').catch(() => null),
-        fetch('/api/alerts').catch(() => null),
+        fetch(apiUrl('/api/sensors')).catch(() => null),
+        fetch(apiUrl('/api/alerts')).catch(() => null),
       ])
 
       if (sensorRes && sensorRes.ok) {

@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     "Smart Agriculture",
   ],
   icons: {
-    icon: "/assets/Minae.png",
-    apple: "/assets/Minae.png",
+    icon: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/manifest.json",
 };

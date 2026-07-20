@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { apiUrl } from '@/lib/api'
 
 interface DiagnosisResult {
   disease: string
@@ -119,7 +120,7 @@ export function AiDiagnosis() {
     setError(null)
     setResult(null)
     try {
-      const res = await fetch('/api/diagnose', {
+      const res = await fetch(apiUrl('/api/diagnose'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: imageBase64 }),

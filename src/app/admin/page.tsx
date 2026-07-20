@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { ArrowLeft, Save, Loader2, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import Link from 'next/link'
 import { useToast } from '@/hooks/use-toast'
+import { apiUrl } from '@/lib/api'
 
 export default function AdminPage() {
   const [prices, setPrices] = useState<any[]>([])
@@ -18,7 +19,7 @@ export default function AdminPage() {
   useEffect(() => {
     let isActive = true
 
-    void fetch('/api/market/prices')
+    void fetch(apiUrl('/api/market/prices'))
       .then((res) => res.json())
       .then((json) => {
         if (isActive && json.success) {
@@ -46,7 +47,7 @@ export default function AdminPage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const res = await fetch('/api/market/prices', {
+      const res = await fetch(apiUrl('/api/market/prices'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'update', updates: prices })
