@@ -15,6 +15,7 @@ export async function GET(request: Request) {
           select: {
             name: true,
             id: true,
+            avatarUrl: true,
           }
         },
         _count: {
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
       id: post.id,
       userId: post.userId,
       userName: post.user?.name || 'Utilisateur',
-      userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80',
+      userAvatar: post.user?.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80',
       userRole: 'Agriculteur',
       caption: post.caption,
       images: post.imageUrl ? [post.imageUrl] : [],

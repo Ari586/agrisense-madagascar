@@ -16,7 +16,7 @@ export async function GET(
       orderBy: { createdAt: 'desc' },
       include: {
         user: {
-          select: { id: true, name: true }
+          select: { id: true, name: true, avatarUrl: true }
         }
       }
     });
@@ -25,7 +25,7 @@ export async function GET(
       id: c.id,
       userId: c.userId,
       userName: c.user?.name || 'Utilisateur',
-      userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80',
+      userAvatar: c.user?.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80',
       content: c.content,
       createdAt: c.createdAt.toISOString()
     }));
@@ -73,7 +73,7 @@ export async function POST(
       },
       include: {
         user: {
-          select: { id: true, name: true }
+          select: { id: true, name: true, avatarUrl: true }
         }
       }
     });
@@ -84,7 +84,7 @@ export async function POST(
         id: comment.id,
         userId: comment.userId,
         userName: comment.user?.name || 'Utilisateur',
-        userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80',
+        userAvatar: comment.user?.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80',
         content: comment.content,
         createdAt: comment.createdAt.toISOString()
       }
