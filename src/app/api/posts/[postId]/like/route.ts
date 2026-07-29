@@ -22,7 +22,7 @@ export async function POST(
       if (admin) userId = admin.id;
       else {
         const anyUser = await prisma.user.findFirst();
-        userId = anyUser?.id;
+        userId = anyUser?.id || null;
       }
     }
     
