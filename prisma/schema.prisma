@@ -6,22 +6,32 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  password  String?
   name      String?
   phone     String?
   region    String?
+  isVerified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  lastSeen  DateTime?
 
   diagnoses   Diagnosis[]
   smsLogs     SmsLog[]
   sensorReadings SensorReading[]
+  posts       Post[]
+  orders      Order[]
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  stories          Story[]
+  likes            Like[]
+  comments         Comment[]
 }
 
 model Diagnosis {
@@ -76,4 +86,75 @@ model MarketPrice {
   percentage  Float    // Pourcentage de variation (ex: 2.5)
   category    String   // "Renivola", "Fanondranana", etc.
   updatedAt   DateTime @updatedAt
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  caption   String
+  imageUrl  String?
+  likes     Int      @default(0) // Legacy
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id])
+  postLikes Like[]
+  comments  Comment[]
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  userId    String
+  items     String   // JSON string storing the cart items
+  total     Float
+  status    String   @default("pending") // pending, completed, cancelled
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model Story {
+  id        String   @id @default(cuid())
+  userId    String
+  imageUrl  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }

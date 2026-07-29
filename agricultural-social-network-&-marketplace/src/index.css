@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Custom natural tones palette */
+  --color-primary: #588157;
+  --color-primary-dark: #3A5A40;
+  --color-primary-light: #A3B18A;
+  --color-accent-pale: #E9EDC9;
+  --color-accent-warm: #D4A373;
+  --color-bg-base: #F9F7F2;
+  --color-bg-card: #FDFBF7;
+  --color-text-dark: #2C3327;
+  --color-border-warm: #E5E2D9;
+  --color-secondary-bg: #F2F0E9;
+
+  /* Override standard colors to map seamlessly to Natural Tones theme */
+  --color-red-50: #F2F5EE;
+  --color-red-100: #E9EDC9;
+  --color-red-200: #CCD5AE;
+  --color-red-300: #A3B18A;
+  --color-red-400: #759774;
+  --color-red-500: #588157;
+  --color-red-600: #3A5A40;
+  --color-red-700: #2C3327;
+
+  --color-rose-50: #FAEDCD;
+  --color-rose-100: #F3EFE3;
+  --color-rose-200: #E5DFC8;
+  --color-rose-300: #D4A373;
+  --color-rose-400: #C08D5B;
+  --color-rose-500: #A47040;
+  --color-rose-600: #7E522B;
+  --color-rose-700: #59371B;
+
+  --color-gray-50: #F9F7F2;
+  --color-gray-100: #E5E2D9;
+  --color-gray-200: #D7D3C5;
+  --color-gray-300: #B7B2A1;
+  --color-gray-400: #928D7C;
+  --color-gray-500: #757060;
+  --color-gray-600: #5A564A;
+  --color-gray-700: #423F36;
+  --color-gray-800: #2C3327;
+  --color-gray-900: #1B2017;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-dark);
+}

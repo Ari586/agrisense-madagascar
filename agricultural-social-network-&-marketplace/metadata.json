@@ -1,0 +1,6 @@
+{
+  "name": "Agricultural Social Network & Marketplace",
+  "description": "A hybrid social network and trade marketplace for farmers, traders, and exporters/importers inspired by Xiaohongshu/RED, featuring crop trading, escrow, document verification, price analytics, and an AI co-pilot.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

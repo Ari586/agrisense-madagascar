@@ -1,0 +1,158 @@
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#e0f2fe"/>
+  
+  <!-- Ocean -->
+  <circle cx="400" cy="600" r="600" fill="#0284c7" opacity="0.3"/>
+  
+  <!-- Madagascar Outline & Regions -->
+  <!-- Diana Region (North) -->
+  <path d="M 380 80 L 420 90 L 430 120 L 410 140 L 390 130 Z" fill="#FF3366" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Sava Region (Northeast) -->
+  <path d="M 430 120 L 470 110 L 490 150 L 470 180 L 430 150 Z" fill="#33CCFF" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Analanjirofo Region (East) -->
+  <path d="M 470 180 L 490 150 L 510 200 L 500 240 L 470 220 Z" fill="#FF338C" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Atsinanana Region (Southeast) -->
+  <path d="M 470 220 L 500 240 L 510 310 L 480 330 L 460 280 Z" fill="#A8FF33" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Sofia Region (Northwest) -->
+  <path d="M 350 100 L 380 80 L 390 130 L 360 150 Z" fill="#FF6633" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Boeny Region (West) -->
+  <path d="M 340 180 L 360 150 L 390 190 L 370 220 Z" fill="#3366FF" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Betsiboka Region (Center-West) -->
+  <path d="M 340 240 L 370 220 L 390 270 L 360 290 Z" fill="#99FF33" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Itasy Region (Center) -->
+  <path d="M 360 290 L 390 270 L 410 320 L 380 340 Z" fill="#FF9933" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Analamanga Region (Capital) -->
+  <path d="M 385 330 L 410 320 L 420 360 L 400 370 Z" fill="#FFCC00" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Alaotra-Mangoro Region (East-Center) -->
+  <path d="M 420 280 L 450 290 L 460 330 L 440 340 L 420 310 Z" fill="#33A8FF" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Vakinankaratra Region (South-Center) -->
+  <path d="M 400 360 L 420 350 L 435 400 L 410 410 Z" fill="#CC33FF" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Bongolava Region (Center-West) -->
+  <path d="M 350 320 L 385 330 L 380 380 L 355 375 Z" fill="#33FF99" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Melaky Region (Southwest) -->
+  <path d="M 320 340 L 350 320 L 355 375 L 330 390 Z" fill="#FF3333" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Amoron'i Mania Region (South) -->
+  <path d="M 390 420 L 415 410 L 425 470 L 400 480 Z" fill="#A833FF" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Vatovavy-Fitovinany Region (Southeast) -->
+  <path d="M 420 440 L 450 450 L 460 520 L 440 530 Z" fill="#8CFF8C" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Haute Matsiatra Region (South) -->
+  <path d="M 370 480 L 400 480 L 410 540 L 380 545 Z" fill="#FF8C8C" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Menabe Region (West) -->
+  <path d="M 330 380 L 360 375 L 370 450 L 340 460 Z" fill="#8CFFFF" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Ihorombe Region (South) -->
+  <path d="M 360 520 L 390 510 L 400 570 L 370 575 Z" fill="#FFFF8C" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Atsimo-Atsinanana Region (Far Southeast) -->
+  <path d="M 440 530 L 470 540 L 480 600 L 450 610 Z" fill="#8C8CFF" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Atsimo-Andrefana Region (Far South) -->
+  <path d="M 330 550 L 370 545 L 380 620 L 345 625 Z" fill="#FFD700" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Androy Region (South) -->
+  <path d="M 345 610 L 380 620 L 390 680 L 360 685 Z" fill="#FF69B4" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Anosy Region (Southeast Corner) -->
+  <path d="M 380 620 L 410 625 L 420 690 L 390 695 Z" fill="#CD5C5C" opacity="0.7" stroke="#333" stroke-width="2"/>
+  
+  <!-- Main title -->
+  <text x="400" y="750" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">
+    Faritra Madagasikara
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="790" font-size="16" text-anchor="middle" fill="#666">
+    Regions of Madagascar
+  </text>
+  
+  <!-- Legend -->
+  <text x="50" y="850" font-size="14" font-weight="bold" fill="#333">Régions:</text>
+  
+  <!-- Legend items (2 columns) -->
+  <g font-size="11" fill="#333">
+    <!-- Column 1 -->
+    <rect x="40" y="870" width="12" height="12" fill="#FF3366"/>
+    <text x="60" y="880">Diana</text>
+    
+    <rect x="40" y="895" width="12" height="12" fill="#33CCFF"/>
+    <text x="60" y="905">Sava</text>
+    
+    <rect x="40" y="920" width="12" height="12" fill="#FF338C"/>
+    <text x="60" y="930">Analanjirofo</text>
+    
+    <rect x="40" y="945" width="12" height="12" fill="#A8FF33"/>
+    <text x="60" y="955">Atsinanana</text>
+    
+    <rect x="40" y="970" width="12" height="12" fill="#FF6633"/>
+    <text x="60" y="980">Sofia</text>
+    
+    <rect x="40" y="995" width="12" height="12" fill="#3366FF"/>
+    <text x="60" y="1005">Boeny</text>
+    
+    <rect x="40" y="1020" width="12" height="12" fill="#99FF33"/>
+    <text x="60" y="1030">Betsiboka</text>
+    
+    <rect x="40" y="1045" width="12" height="12" fill="#FF9933"/>
+    <text x="60" y="1055">Itasy</text>
+    
+    <rect x="40" y="1070" width="12" height="12" fill="#FFCC00"/>
+    <text x="60" y="1080">Analamanga</text>
+    
+    <rect x="40" y="1095" width="12" height="12" fill="#33A8FF"/>
+    <text x="60" y="1105">Alaotra-Mangoro</text>
+    
+    <!-- Column 2 -->
+    <rect x="280" y="870" width="12" height="12" fill="#CC33FF"/>
+    <text x="300" y="880">Vakinankaratra</text>
+    
+    <rect x="280" y="895" width="12" height="12" fill="#33FF99"/>
+    <text x="300" y="905">Bongolava</text>
+    
+    <rect x="280" y="920" width="12" height="12" fill="#FF3333"/>
+    <text x="300" y="930">Melaky</text>
+    
+    <rect x="280" y="945" width="12" height="12" fill="#A833FF"/>
+    <text x="300" y="955">Amoron'i Mania</text>
+    
+    <rect x="280" y="970" width="12" height="12" fill="#8CFF8C"/>
+    <text x="300" y="980">Vatovavy-Fitovinany</text>
+    
+    <rect x="280" y="995" width="12" height="12" fill="#FF8C8C"/>
+    <text x="300" y="1005">Haute Matsiatra</text>
+    
+    <rect x="280" y="1020" width="12" height="12" fill="#8CFFFF"/>
+    <text x="300" y="1030">Menabe</text>
+    
+    <rect x="280" y="1045" width="12" height="12" fill="#FFFF8C"/>
+    <text x="300" y="1055">Ihorombe</text>
+    
+    <rect x="280" y="1070" width="12" height="12" fill="#8C8CFF"/>
+    <text x="300" y="1080">Atsimo-Atsinanana</text>
+    
+    <rect x="280" y="1095" width="12" height="12" fill="#FFD700"/>
+    <text x="300" y="1105">Atsimo-Andrefana</text>
+    
+    <rect x="280" y="1120" width="12" height="12" fill="#FF69B4"/>
+    <text x="300" y="1130">Androy</text>
+    
+    <rect x="280" y="1145" width="12" height="12" fill="#CD5C5C"/>
+    <text x="300" y="1155">Anosy</text>
+  </g>
+</svg>

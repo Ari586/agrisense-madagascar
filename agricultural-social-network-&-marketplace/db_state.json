@@ -1,0 +1,378 @@
+{
+  "users": [
+    {
+      "id": "user1",
+      "name": "Juan Valdez",
+      "email": "juan@colombiafarms.com",
+      "role": "farmer",
+      "location": "Medellín, Colombia",
+      "isVerified": true,
+      "profilePicture": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+      "certifications": [
+        "Organic Certified",
+        "Fair Trade Certified"
+      ],
+      "rating": 4.9,
+      "followersCount": 1420,
+      "followingCount": 310
+    },
+    {
+      "id": "user2",
+      "name": "Sarah Jenkins",
+      "email": "sarah.j@agritrade-europe.com",
+      "role": "trader",
+      "location": "Rotterdam, Netherlands",
+      "isVerified": true,
+      "profilePicture": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+      "certifications": [
+        "GlobalG.A.P. Broker",
+        "Import License A-1"
+      ],
+      "rating": 4.8,
+      "followersCount": 890,
+      "followingCount": 420
+    },
+    {
+      "id": "user3",
+      "name": "Amara Diop",
+      "email": "amara@senegalagri.sn",
+      "role": "exporter",
+      "location": "Dakar, Senegal",
+      "isVerified": true,
+      "profilePicture": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80",
+      "certifications": [
+        "Ecocert Organic",
+        "Phytosanitary Clearance"
+      ],
+      "rating": 4.7,
+      "followersCount": 650,
+      "followingCount": 180
+    },
+    {
+      "id": "user4",
+      "name": "Chen Wei",
+      "email": "chen.wei@shanghai-import.cn",
+      "role": "importer",
+      "location": "Shanghai, China",
+      "isVerified": true,
+      "profilePicture": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80",
+      "certifications": [
+        "China Customs Importer Bond",
+        "CIQ Licensed"
+      ],
+      "rating": 4.6,
+      "followersCount": 1105,
+      "followingCount": 520
+    }
+  ],
+  "posts": [
+    {
+      "id": "post1",
+      "userId": "user1",
+      "userName": "Juan Valdez",
+      "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+      "userRole": "farmer",
+      "caption": "Cherry beans are absolutely glowing this week! 🍒 High altitudes in Antioquia coupled with optimal seasonal rain have produced perfect sugar counts. Looking forward to our premium specialty wash batches! #OrganicCoffee #SustainableFarming #ColombiaHarvest",
+      "images": [
+        "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80"
+      ],
+      "createdAt": "2026-07-22T12:20:02.450Z",
+      "hashtags": [
+        "OrganicCoffee",
+        "SustainableFarming",
+        "ColombiaHarvest"
+      ],
+      "likesCount": 245,
+      "commentsCount": 18,
+      "savedCount": 42,
+      "likedByMe": false,
+      "savedByMe": false,
+      "taggedProductId": "prod1",
+      "taggedProductTitle": "Premium Organic Arabica Coffee Beans",
+      "taggedProductPrice": 6.2
+    },
+    {
+      "id": "post2",
+      "userId": "user2",
+      "userName": "Sarah Jenkins",
+      "userAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+      "userRole": "trader",
+      "caption": "With European port congestions clearing, cold-chain space is opening up in Rotterdam. We are seeing a spike in wholesale inquiries for imported tropical crops. Contact us to coordinate phytosanitary documentation and customs clearance. #WheatExport #AgriLogistics #GlobalTrade",
+      "images": [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80"
+      ],
+      "createdAt": "2026-07-21T17:20:02.452Z",
+      "hashtags": [
+        "WheatExport",
+        "AgriLogistics",
+        "GlobalTrade"
+      ],
+      "likesCount": 112,
+      "commentsCount": 9,
+      "savedCount": 15,
+      "likedByMe": false,
+      "savedByMe": false,
+      "taggedProductId": "prod4",
+      "taggedProductTitle": "Agri-Logistics Port Cold Storage Logistics",
+      "taggedProductPrice": 1500
+    },
+    {
+      "id": "post3",
+      "userId": "user3",
+      "userName": "Amara Diop",
+      "userAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80",
+      "userRole": "exporter",
+      "caption": "Our premium grade dried ginger is packed and phytosanitary certified, ready for global shipping from Dakar port. We have strictly optimized the sun-drying process to maintain a moisture level under 12%. #GingerExport #OrganicGinger #SenegalAgri",
+      "images": [
+        "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=600&q=80"
+      ],
+      "createdAt": "2026-07-20T17:20:02.452Z",
+      "hashtags": [
+        "GingerExport",
+        "OrganicGinger",
+        "SenegalAgri"
+      ],
+      "likesCount": 88,
+      "commentsCount": 4,
+      "savedCount": 22,
+      "likedByMe": false,
+      "savedByMe": false,
+      "taggedProductId": "prod2",
+      "taggedProductTitle": "Whole Dried Ginger (Premium Grade A)",
+      "taggedProductPrice": 2.8
+    }
+  ],
+  "products": [
+    {
+      "id": "prod1",
+      "userId": "user1",
+      "userName": "Juan Valdez",
+      "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+      "userRole": "farmer",
+      "userRating": 4.9,
+      "title": "Premium Organic Arabica Coffee Beans",
+      "description": "High-altitude micro-lot Arabica coffee beans. Hand-harvested, washed processing, dried on raised beds. Fair Trade certified and organic. Ready for export in 60kg jute bags.",
+      "price": 6.2,
+      "unit": "kg",
+      "category": "crops",
+      "images": [
+        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1587918842454-870dbd18261a?auto=format&fit=crop&w=600&q=80"
+      ],
+      "isAvailable": true,
+      "moq": 500,
+      "location": "Medellín, Colombia",
+      "certification": [
+        "Organic",
+        "Fair Trade"
+      ],
+      "urgency": "medium"
+    },
+    {
+      "id": "prod2",
+      "userId": "user3",
+      "userName": "Amara Diop",
+      "userAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80",
+      "userRole": "exporter",
+      "userRating": 4.7,
+      "title": "Whole Dried Ginger (Premium Grade A)",
+      "description": "High-grade whole dried ginger rhizomes. Cleaned, thoroughly sun-dried, and graded. Excellent heat and aroma profile. Packaged in 50kg PP bags, phytosanitary certified.",
+      "price": 2.8,
+      "unit": "kg",
+      "category": "crops",
+      "images": [
+        "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=600&q=80"
+      ],
+      "isAvailable": true,
+      "moq": 1000,
+      "location": "Dakar, Senegal",
+      "certification": [
+        "Phytosanitary Approved"
+      ],
+      "urgency": "low"
+    },
+    {
+      "id": "prod3",
+      "userId": "user2",
+      "userName": "Sarah Jenkins",
+      "userAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+      "userRole": "trader",
+      "userRating": 4.8,
+      "title": "High-Capacity Irrigation Water Pump",
+      "description": "Diesel-powered 4-inch agricultural centrifugal irrigation water pump. Capable of delivering 1200L/min. Sturdy steel roll cage frame, electric start, highly reliable for field cropping.",
+      "price": 450,
+      "unit": "unit",
+      "category": "machinery",
+      "images": [
+        "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"
+      ],
+      "isAvailable": true,
+      "moq": 1,
+      "location": "Rotterdam, Netherlands",
+      "certification": [
+        "CE Certified"
+      ],
+      "urgency": "low"
+    },
+    {
+      "id": "prod4",
+      "userId": "user2",
+      "userName": "Sarah Jenkins",
+      "userAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+      "userRole": "trader",
+      "userRating": 4.8,
+      "title": "Agri-Logistics Port Cold Storage Logistics",
+      "description": "End-to-end cold-chain logistics from port Rotterdam to any destination in Europe. We provide customs brokerage, phytosanitary inspection scheduling, and temperature-tracked cargo trucks.",
+      "price": 1500,
+      "unit": "container",
+      "category": "services",
+      "images": [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80"
+      ],
+      "isAvailable": true,
+      "moq": 1,
+      "location": "Rotterdam, Netherlands",
+      "certification": [
+        "HACCP Certified"
+      ],
+      "urgency": "high"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord1",
+      "buyerId": "user4",
+      "buyerName": "Chen Wei",
+      "sellerId": "user1",
+      "sellerName": "Juan Valdez",
+      "productId": "prod1",
+      "productTitle": "Premium Organic Arabica Coffee Beans",
+      "quantity": 1000,
+      "price": 6.2,
+      "totalAmount": 6200,
+      "status": "escrow_deposited",
+      "escrowDetails": "US $6,200 held in AgriRED Trade Escrow. Awaiting seller shipment and phytosanitary upload.",
+      "createdAt": "2026-07-19T17:20:02.452Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg1",
+      "senderId": "user4",
+      "receiverId": "user1",
+      "content": "Hi Juan, I am very interested in your Premium Organic Arabica Coffee Beans. What is the total export lead time to Shanghai port?",
+      "createdAt": "2026-07-19T16:20:02.452Z",
+      "type": "text"
+    },
+    {
+      "id": "msg2",
+      "senderId": "user1",
+      "receiverId": "user4",
+      "content": "Hello Chen! Once escrow is established, we can mill and pack in jute bags within 10 days, and dispatch from port Buenaventura. Total sea transit is around 25 days.",
+      "createdAt": "2026-07-19T16:32:02.452Z",
+      "type": "text"
+    },
+    {
+      "id": "msg3",
+      "senderId": "user4",
+      "receiverId": "user1",
+      "content": "Sounds excellent. I have submitted a purchase request for 1,000 kg and initiated the escrow transaction of $6,200. Please check your order panel.",
+      "createdAt": "2026-07-19T17:20:02.452Z",
+      "type": "text"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc1",
+      "userId": "user1",
+      "title": "Colombia Organic Agriculture Certificate 2026",
+      "docType": "Organic Certificate",
+      "status": "verified",
+      "verifiedAt": "2026-07-01T21:20:02.452Z",
+      "fileUrl": "https://example.com/certs/colombia_organic_2026.pdf"
+    },
+    {
+      "id": "doc2",
+      "userId": "user3",
+      "title": "Senegal Phytosanitary Export Permit (Ginger)",
+      "docType": "Phytosanitary Certificate",
+      "status": "pending",
+      "fileUrl": "https://example.com/certs/dakar_phyto_ginger_draft.pdf"
+    }
+  ],
+  "threads": [
+    {
+      "id": "th1",
+      "userId": "user1",
+      "userName": "Juan Valdez",
+      "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+      "title": "Coping with late seasonal rains in high-altitude coffee cultivation",
+      "content": "Has anyone else in South America noticed a delayed rainfall cycle this season? We are adjusting our wet mill schedule and utilizing covered solar dryers rather than open beds to safeguard bean moisture levels. Let's share techniques.",
+      "tags": [
+        "CoffeeFarming",
+        "ClimateAdaptation",
+        "PostHarvest"
+      ],
+      "createdAt": "2026-07-18T17:20:02.452Z",
+      "repliesCount": 2
+    },
+    {
+      "id": "th2",
+      "userId": "user2",
+      "userName": "Sarah Jenkins",
+      "userAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+      "title": "EU Import Regulations Updates (2026 Deforestation Due Diligence)",
+      "content": "Important briefing for all coffee, soy, and cocoa exporters to the EU. EU Deforestation Regulation (EUDR) checks are stepping up. Importers are requiring exact polygon GPS coordinates of farm plots. Let's discuss standard mapping tools that are compliant.",
+      "tags": [
+        "EUTreasury",
+        "Deforestation",
+        "TradeCompliance"
+      ],
+      "createdAt": "2026-07-20T17:20:02.452Z",
+      "repliesCount": 1
+    }
+  ],
+  "replies": [
+    {
+      "id": "rep1",
+      "threadId": "th1",
+      "userId": "user3",
+      "userName": "Amara Diop",
+      "userAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80",
+      "content": "Yes Juan, we faced a similar situation with our root crops in Senegal. We shifted completely to raised solar hoop houses. It creates a microclimate that dries crops 40% faster while protecting from sudden showers.",
+      "createdAt": "2026-07-19T19:20:02.452Z"
+    },
+    {
+      "id": "rep2",
+      "threadId": "th2",
+      "userId": "user1",
+      "userName": "Juan Valdez",
+      "userAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+      "content": "Thanks for bringing this up, Sarah. In Colombia, we are partnering with local federations to map farm plots with mobile GIS apps. This enables us to provide the required geo-location data directly with the export invoice.",
+      "createdAt": "2026-07-22T05:20:02.452Z"
+    }
+  ],
+  "webinars": [
+    {
+      "id": "web1",
+      "title": "GPS Farm Mapping for Global Trade Compliance",
+      "host": "Dr. Marcus Vance (Agri-Tech Lead)",
+      "description": "Learn how to generate and verify GPS polygon shapefiles for farm plots. This session covers free mobile tools and how to package data for EU and US trade portals.",
+      "date": "2026-08-04",
+      "time": "14:00 UTC",
+      "attendeesCount": 184,
+      "registeredByMe": false
+    },
+    {
+      "id": "web2",
+      "title": "Advanced Sun-Drying & Moisture Control in Spices",
+      "host": "Amina Belghazi (Senior Post-Harvest Engineer)",
+      "description": "A deep dive into moisture sensors, solar dryers, and sanitary handling of high-value crops like vanilla, cardamom, and ginger to avoid fungal contaminations.",
+      "date": "2026-08-11",
+      "time": "09:30 UTC",
+      "attendeesCount": 95,
+      "registeredByMe": false
+    }
+  ]
+}
