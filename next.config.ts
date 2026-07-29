@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: false,
   devIndicators: false,
+  async rewrites() {
+    return [
+      {
+        source: '/app',
+        destination: '/app/index.html',
+      },
+      {
+        source: '/app/:path*',
+        destination: '/app/index.html',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

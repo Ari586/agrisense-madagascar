@@ -17,5 +17,17 @@ module.exports = {
         turbopack: {
           root: process.cwd(),
         },
+        async rewrites() {
+          return [
+            {
+              source: '/app',
+              destination: '/app/index.html',
+            },
+            {
+              source: '/app/:path*',
+              destination: '/app/index.html',
+            },
+          ];
+        },
       }),
 };
