@@ -61,6 +61,11 @@ export async function POST(request: Request) {
     
     // Simulating user ID if not provided (In real app, extract from token)
     let userId = data.userId;
+    if (userId) {
+      const userExists = await prisma.user.findUnique({ where: { id: userId } });
+      if (!userExists) userId = null;
+    }
+
     if (!userId) {
       const admin = await prisma.user.findFirst({ where: { email: 'Ari' } });
       if (admin) userId = admin.id;
