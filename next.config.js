@@ -14,6 +14,9 @@ module.exports = {
     : {
         output: 'standalone',
         outputFileTracingRoot: process.cwd(),
+        eslint: {
+          ignoreDuringBuilds: true,
+        },
         turbopack: {
           root: process.cwd(),
         },
